@@ -1,0 +1,338 @@
+# SPECTR Internal Validation
+
+* **System:** SPECTR (Secure Point-of-care Enrollment and Centralized Trial Randomization)
+* **Target Software Version:** v1.0.0-alpha
+* **Test Environment:** https://spectr.mmmr.in (Live web-app)
+* **Validation Team:**
+  * **Clinical Lead & Methodologist:** Dr. Manu Pradeep, MBBS, MSc. (Epidemiology), MRCGP [INT.]
+  * **Lead Software Engineer:** Mr. Dhanush Kumar, BCA, MCA (Technical Lead)
+* **Standard Operating Context:** ICH-GCP E6(R2/R3) Section 5.5.3 (Computerized Systems in Clinical Trials) & 21 CFR Part 11
+
+---
+
+## 1. Scope & Objective
+
+This protocol governs the internal technical verification, baseline functional sanity, concurrency controls, and regulatory safeguards of SPECTR prior to multicenter User Acceptance Testing (UAT). The verification sequence is organized into three sequential gates:
+
+1. **Gate 1: Baseline Functional Sanity:** Validating the core, error-free typical user path (authentication, single-file sequence ingestion, single-participant point-of-care allocation, and basic log export) to certify build stability.
+2. **Gate 2: Concurrency, Concealment & Regulatory Integrity:** Verifying database row-level locking under simultaneous bedside draws, cryptographic allocation concealment, emergency unblinding workflows, multicenter queue isolation, server-enforced UTC timekeeping, and immutable audit logs.
+3. **Gate 3: User Boundary, Disaster Recovery & Adverse Event Resilience:** Handling network interruptions, verifying database backup restoration and data recovery, managing stratum capacity limits, and enforcing immediate session/credential revocation.
+
+---
+
+## 2. Test Execution Log
+
+| Test Case ID | Gate / Category | Objective | Tester | Target Date | Status |
+|---|---|---|---|---|---|
+| **TC-SMK-01** | Gate 1: Sanity | User authentication, dashboard initialization and site display | — | — | Pending |
+| **TC-SMK-02** | Gate 1: Sanity | Standard single-file sequence ingestion and table mapping | — | — | Pending |
+| **TC-SMK-03** | Gate 1: Sanity | End-to-end baseline allocation | — | — | Pending |
+| **TC-SMK-04** | Gate 1: Sanity | On-demand allocation log and audit CSV export | — | — | Pending |
+| **TC-CON-01** | Gate 2: Concurrency | Row-locking under simultaneous bedside allocations | — | — | Pending |
+| **TC-IDM-01** | Gate 2: Resilience | Idempotency and double-click / network drop handling | — | — | Pending |
+| **TC-CNC-01** | Gate 2: Concealment | Zero sequence pre-fetching or client-side DOM/state leakage | — | — | Pending |
+| **TC-UNB-01** | Gate 2: Regulatory | Audited emergency single-participant code-break (ICH-GCP 5.5.3 g) | — | — | Pending |
+| **TC-SEC-01** | Gate 2: Multicenter | Site-specific queue isolation and cross-center access denial | — | — | Pending |
+| **TC-VAL-01** | Gate 2: Data Integrity | Duplicate Participant ID entry prevention | — | — | Pending |
+| **TC-CLK-01** | Gate 2: Data Integrity | Server-side UTC enforcement against client clock tampering | — | — | Pending |
+| **TC-AUD-01** | Gate 2: Regulatory | Audit trail immutability and append-only database permissions | — | — | Pending |
+| **TC-BND-01** | Gate 3: Boundary | Graceful handling of stratum capacity exhaustion | — | — | Pending |
+| **TC-ING-01** | Gate 3: Ingestion | Schema and syntax validation of malformed sequence files | — | — | Pending |
+| **TC-REC-01** | Gate 3: Resilience | Database snapshot restoration and data integrity (ICH-GCP 5.5.3 f) | — | — | Pending |
+| **TC-SES-01** | Gate 3: Session Security | Mid-form authentication expiration and safe failure | — | — | Pending |
+| **TC-ACC-01** | Gate 3: Access Control | Immediate lockout upon account suspension/revocation | — | — | Pending |
+| **TC-NOT-01** | Gate 3: Notifications | Automated email alerts and header verification | — | — | Pending |
+
+---
+
+## 3. Detailed Test Procedures
+
+### Gate 1: Baseline Functional Sanity
+
+#### TC-SMK-01: Authentication, Dashboard Initialization & Role Display
+
+* **Objective:** Verify standard credentials authenticate securely and populate the investigator dashboard with accurate trial affiliations and role permissions.
+* **Method:**
+  1. Navigate to the login portal on https://spectr.mmmr.in/investigator/login.
+  2. Input valid credentials for an assigned Site Investigator (`user: inv_Hospital_01`).
+  3. Inspect the landing dashboard view.
+* **Pass Criteria:**
+  * Successful authentication with JWT issuance.
+  * User interface correctly displays user full name, role (`Site Investigator`), assigned institution (`Hospital One`), and active approved trial title.
+  * No administrative or cross-site configuration tabs are visible.
+* **Observed Result:**
+* **Sign-off:** Lead Developer | Date: —
+
+---
+
+#### TC-SMK-02: Single-File Sequence Ingestion & Table Mapping
+
+* **Objective:** Verify that a standard, correctly formatted randomization list ingests, parses, and populates the database without truncation.
+* **Method:**
+  1. Log in at https://spectr.mmmr.in/organizer/login with Central Trial Coordinator (CTC) credentials.
+  2. Upload a verified 100-row CSV containing standard columns (`sequence_number, kit_code, site, strat, treatment_arm`).
+  3. Inspect stratum queue summary tables on the administrative dashboard.
+* **Pass Criteria:**
+  * File parsed with zero schema warnings; database commits exactly 100 sequence rows.
+  * Active queue dashboard accurately reflects 100 unconsumed positions partitioned across specified strata.
+  * Treatment labels remain masked to site-level accounts.
+* **Observed Result:**
+* **Sign-off:** Clinical Epidemiologist | Date: —
+
+---
+
+#### TC-SMK-03: End-to-End Baseline Allocation
+
+* **Objective:** Verify standard point-of-care patient randomization under nominal operating conditions.
+* **Method:**
+  1. Log in as an authorized site investigator.
+  2. Open the point-of-care randomization form.
+  3. Enter valid screening ID `AMP-001`, check all eligibility criteria confirmation toggles, and click "Randomize".
+* **Pass Criteria:**
+  * System advances the active stratum sequence pointer from N = 1 to N = 2.
+  * Bedside interface displays immediate, immutable allocation modal with participant screening ID and treatment assignment.
+  * Allocation transaction commits in under 1 second.
+* **Observed Result:**
+* **Sign-off:** Clinical Epidemiologist | Date: —
+
+---
+
+#### TC-SMK-04: Allocation Log & Audit Trail Export
+
+* **Objective:** Verify that trial coordinators can export an accurate, complete CSV record of enrolled allocations on demand.
+* **Method:**
+  1. Log in with Clinical Trial Coordinator credentials following test allocations.
+  2. Trigger the "Export CSV" action under "Randomized Sequence Records".
+  3. Inspect the exported CSV dataset.
+* **Pass Criteria:**
+  * Exported file matches current database state exactly.
+  * Columns contain de-identified screening IDs, strata, allocation timestamps (UTC), operator IDs, and treatment codes.
+  * Zero corruption or character encoding errors.
+* **Observed Result:**
+* **Sign-off:** Clinical Epidemiologist | Date: —
+
+---
+
+### Gate 2: Concurrency, Concealment & Regulatory Integrity
+
+#### TC-CON-01: Bedside Concurrency & Row Locking
+
+* **Objective:** Ensure two simultaneous allocation requests within the identical stratum never assign the same row or block sequence.
+* **Method:**
+  1. Initialize stratum `Hospital 1 / Stratum 1` with next available sequence N = 1.
+  2. Dispatch two asynchronous `randomize` requests at the identical millisecond timestamp across separate sessions for Participant IDs `TEST-001` and `TEST-002`.
+* **Pass Criteria:**
+  * `TEST-001` claims sequence row 1.
+  * `TEST-002` waits for transaction lock release and claims sequence row 2.
+  * Zero duplicate row assignments; zero unhandled database deadlocks.
+* **Observed Result:**
+* **Sign-off:** Lead Developer and Clinical Epidemiologist | Date: —
+
+---
+
+#### TC-IDM-01: Idempotency & Network Drop Handling
+
+* **Objective:** Verify that rapid multi-clicks or abrupt network disconnections during submission do not trigger double allocations or orphan sequence rows.
+* **Method:**
+  1. Fill valid screening data for Participant ID `TEST-IDM-01`.
+  2. Rapidly double-click the "Randomize" CTA button within 100 ms.
+  3. Simulate a network packet drop during an ongoing allocation request.
+* **Pass Criteria:**
+  * API enforces idempotency key handling; exactly one allocation row is consumed and committed.
+  * Client receives a single valid assignment payload.
+  * No sequence row is consumed without a corresponding completed participant record.
+* **Observed Result:**
+* **Sign-off:** Lead Developer | Date: —
+
+---
+
+#### TC-CNC-01: Allocation Concealment & Client Leakage
+
+* **Objective:** Verify that allocation concealment cannot be breached by inspecting browser cache, Network tab payloads, state stores, or DOM elements before clicking "Randomize".
+* **Method:**
+  1. Open the patient screening intake page.
+  2. Inspect the browser Network tab, application state (Redux/Pinia/LocalStorage/SessionStorage), and DOM HTML before submission.
+* **Pass Criteria:**
+  * Zero upcoming sequence indices, block boundary indicators, or treatment labels exist in client memory.
+  * Allocation assignment is revealed strictly in the authenticated HTTP response after server-side database commit.
+* **Observed Result:**
+* **Sign-off:** Lead Developer | Date: —
+
+---
+
+#### TC-UNB-01: Audited Emergency Code-Break (ICH-GCP E6 5.5.3 g)
+
+* **Objective:** Ensure emergency unblinding can be executed immediately for an individual participant during a clinical emergency without compromising the blinding of any other participant or future allocations.
+* **Method:**
+  1. Complete a test allocation for Participant ID `AMP-001` in a masked study stratum.
+  2. Log in with credentials authorized to request emergency code-break (Central Trial Coordinator).
+  3. Navigate to the emergency code-break module for `AMP-001`, enter mandatory justification text (`Suspected Unexpected Serious Adverse Reaction - SUSAR`), and submit.
+* **Pass Criteria:**
+  * System reveals the assigned treatment arm strictly and exclusively for Participant ID `AMP-001`.
+  * All other past and future sequence rows in the stratum remain fully masked.
+  * An immutable entry is appended to the audit log recording operator user ID, client IP, UTC timestamp, unblinded participant ID, and the exact clinical rationale entered.
+  * Automated security email notification is dispatched immediately to the Central Coordinating Office.
+* **Observed Result:**
+* **Sign-off:** Clinical Epidemiologist | Date: —
+
+---
+
+#### TC-SEC-01: Multicenter Queue Isolation
+
+* **Objective:** Verify investigators credentialed at Site A cannot access, view, or pull allocations from Site B's queue.
+* **Method:**
+  1. Authenticate session under `investigator_hospital1`.
+  2. Attempt a direct API call or UI request to pull from `Site: Amrita Hospital`.
+* **Pass Criteria:** HTTP 403 Forbidden returned; sequence pointer does not advance; unauthorized access attempt logged to security audit trail.
+* **Observed Result:**
+* **Sign-off:** Lead Developer | Date: —
+
+---
+
+#### TC-VAL-01: Duplicate Participant ID Protection
+
+* **Objective:** Prevent duplicate screening IDs from being randomized multiple times in the same study.
+* **Method:**
+  1. Complete allocation for Participant ID `AMP-101` in stratum `Amrita Hospital / No Epidural`.
+  2. Attempt a second allocation using the identical ID `AMP-101` in any stratum.
+* **Pass Criteria:** System blocks submission with error `Participant ID already randomized`; sequence queue remains unconsumed.
+* **Observed Result:**
+* **Sign-off:** Clinical Epidemiologist | Date: —
+
+---
+
+#### TC-CLK-01: Server-Side UTC Enforcement vs. Client Drift
+
+* **Objective:** Ensure audit logs and allocation timestamps cannot be altered by client device clock manipulation.
+* **Method:**
+  1. Intentionally alter the client machine system clock by +12 hours and set local timezone to UTC-5.
+  2. Submit an allocation for Participant ID `TEST-CLK-01`.
+  3. Query the database audit log record for `TEST-CLK-01`.
+* **Pass Criteria:**
+  * Database timestamp strictly reflects the server's authoritative UTC timestamp (`CURRENT_TIMESTAMP AT TIME ZONE 'UTC'`).
+  * Client device time metadata is ignored for record sequence ordering.
+* **Observed Result:**
+* **Sign-off:** Lead Developer | Date: —
+
+---
+
+#### TC-AUD-01: Audit Trail Immutability (ICH-GCP E6)
+
+* **Objective:** Verify compliance with computerized clinical trial system audit trail requirements.
+* **Method:**
+  1. Complete a test allocation transaction.
+  2. Inspect database `audit_logs` table directly via SQL.
+  3. Attempt an `UPDATE` and `DELETE` SQL query on the audit record.
+* **Pass Criteria:**
+  * Record contains: `study_id`, `participant_id`, `stratum`, `treatment_assigned`, `operator_user_id`, `client_ip`, and `timestamp_utc`.
+  * Database rejects manual edits with `PERMISSION DENIED` (append-only table permissions).
+* **Observed Result:**
+* **Sign-off:** Lead Developer | Date: —
+
+---
+
+### Gate 3: User Boundary, Disaster Recovery & Adverse Event Resilience
+
+#### TC-BND-01: Stratum Capacity & Exhaustion Handling
+
+* **Objective:** Ensure predictable, safe platform response when a pre-uploaded stratum sequence is fully exhausted.
+* **Method:**
+  1. Ingest a minimal test sequence of length N = 4 for a mock stratum.
+  2. Execute 4 sequential allocations.
+  3. Trigger a 5th allocation request.
+* **Pass Criteria:** System displays explicit modal: `Stratum allocation capacity reached. Contact Central Trial Coordinator.` No unhandled 500 exceptions.
+* **Observed Result:**
+* **Sign-off:** Clinical Epidemiologist | Date: —
+
+---
+
+#### TC-ING-01: CSV Parsing & Schema Integrity
+
+* **Objective:** Validate error handling when malformed or improperly formatted randomization lists are uploaded.
+* **Method:**
+  1. Upload CSV missing the required `treatment_arm` column.
+  2. Upload CSV containing non-integer sequence IDs or mismatched column counts.
+* **Pass Criteria:** Ingestion rejected; user shown exact row/column syntax failure; complete transaction rollback.
+* **Observed Result:**
+* **Sign-off:** Clinical Epidemiologist | Date: —
+
+---
+
+#### TC-REC-01: Backup Restoration & Data Recovery (ICH-GCP E6 5.5.3 f)
+
+* **Objective:** Verify that database automated snapshots can be restored without row corruption, sequence index shifts, or audit trail loss.
+* **Method:**
+  1. Record current stratum sequence pointers, allocation row counts, and audit log entry totals for a test study.
+  2. Execute a baseline allocation for Participant ID `TEST-REC-01`.
+  3. Trigger a platform-managed database snapshot restore to the pre-allocation checkpoint via hosting provider backup controls.
+  4. Reconnect the application and query randomization records, sequence queue state, and audit logs.
+* **Pass Criteria:**
+  * Post-restore database state matches the pre-allocation checkpoint exactly.
+  * Sequence pointer for the test stratum is unchanged; no duplicate or skipped sequence indices.
+  * All historical audit log entries remain present and append-only.
+  * Application resumes normal allocation operations without data corruption errors.
+* **Observed Result:**
+* **Sign-off:** Lead Developer | Date: —
+
+---
+
+#### TC-SES-01: Mid-Form Session Expiration
+
+* **Objective:** Verify safe failure and sequence protection when an authentication token expires while an investigator is filling screening details.
+* **Method:**
+  1. Authenticate as an investigator and open the intake form.
+  2. Force session expiration (or wait for JWT expiration).
+  3. Click "Randomize".
+* **Pass Criteria:**
+  * System returns `401 Unauthorized`.
+  * No sequence row is allocated, revealed, or consumed in the database.
+  * User is redirected to login without state corruption.
+* **Observed Result:**
+* **Sign-off:** Clinical Epidemiologist | Date: —
+
+---
+
+#### TC-ACC-01: Immediate Revocation of Access
+
+* **Objective:** Ensure deactivated user accounts cannot execute allocations even if they hold an unexpired cached session.
+* **Method:**
+  1. Log in as `investigator_site_b`.
+  2. From the Admin panel, mark `investigator_site_b` as `INACTIVE / REVOKED`.
+  3. From the investigator session, immediately attempt an allocation request.
+* **Pass Criteria:**
+  * Allocation request is rejected with `403 Forbidden` or `401 Unauthorized`.
+  * Sequence pointer does not increment.
+* **Observed Result:**
+* **Sign-off:** Clinical Epidemiologist | Date: —
+
+---
+
+#### TC-NOT-01: Automated Verification Notifications
+
+* **Objective:** Confirm instantaneous automated notifications to Central Trial Coordinator.
+* **Method:** Execute allocation for `AMP-102`.
+* **Pass Criteria:**
+  * Site email received with allocation confirmation.
+  * Coordinating center email received with audit record.
+  * Delivery completed within 30 seconds; SPF/DKIM headers pass verification.
+* **Observed Result:**
+* **Sign-off:** Clinical Epidemiologist | Date: —
+
+---
+
+## 4. Defect & Bug Tracking Matrix
+
+| Defect ID | Associated Test Case | Description / Error Trace | Severity | Status | Commit Fix Hash |
+|---|---|---|---|---|---|
+| — | — | — | — | — | — |
+
+---
+
+## 5. Alpha Validation Completion Sign-Off
+
+The sign-offs below certify that all alpha test cases across Gates 1, 2, and 3 have been executed and verified against predefined pass criteria in the testbed environment.
+
+| Role | Name & Title | Final Verification Commit | Date (UTC) | Status |
+|---|---|---|---|---|
+| **Lead Developer** | — | Pending final validation cycle | — | Open |
+| **Clinical Epidemiologist** | — | Pending final validation cycle | — | Open |
