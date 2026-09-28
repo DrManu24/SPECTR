@@ -22,7 +22,7 @@ This protocol governs the internal technical verification, baseline functional s
 
 ## 2. Test Execution Log
 
-| Test Case ID | Gate / Category | Objective | Tester | Target Date | Status |
+| Test Case ID | Gate / Category | Objective | Tester | Date | Status |
 |---|---|---|---|---|---|
 | **TC-SMK-01** | Gate 1: Sanity | User authentication, dashboard initialization and site display | — | — | Pending |
 | **TC-SMK-02** | Gate 1: Sanity | Standard single-file sequence ingestion and table mapping | — | — | Pending |

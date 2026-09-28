@@ -18,9 +18,11 @@ IS_PRODUCTION = ENVIRONMENT == "production"
 
 
 def normalize_database_url(url: str) -> str:
-    """Railway/Heroku often provide postgres:// — SQLAlchemy needs a psycopg2 driver."""
+    """Normalize hosted Postgres URLs to the installed psycopg2 driver."""
     if url.startswith("postgres://"):
         return url.replace("postgres://", "postgresql+psycopg2://", 1)
+    if url.startswith("postgresql+psycopg://"):
+        return url.replace("postgresql+psycopg://", "postgresql+psycopg2://", 1)
     if url.startswith("postgresql://") and "+psycopg2" not in url:
         return url.replace("postgresql://", "postgresql+psycopg2://", 1)
     return url
