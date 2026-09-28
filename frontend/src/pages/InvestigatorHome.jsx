@@ -197,7 +197,7 @@ function InvestigatorHome() {
       if (redirectIfSessionExpired(res, navigate)) return
 
       if (!res.ok) {
-        setError(parseApiError(data.detail) || 'Failed to assign kit code.')
+        setError(parseApiError(data.detail) || 'Randomization failed.')
         return
       }
 
@@ -392,8 +392,8 @@ function InvestigatorHome() {
             <div className="study-form-card" style={{ marginTop: '24px' }}>
               <div className="setup-card__header">
                 <span className="setup-badge">Randomization & Kit Assignment</span>
-                <h2 style={{ marginTop: '8px' }}>Assign Kit Code for {PARTICIPANT_LABEL}</h2>
-                <p>Enter the {PARTICIPANT_LABEL} ID and stratum to assign the next available kit code at your site.</p>
+                <h2 style={{ marginTop: '8px' }}>Randomize {PARTICIPANT_LABEL}</h2>
+                <p>Enter the {PARTICIPANT_LABEL} ID and stratum to randomize and receive the next available kit code at your site.</p>
               </div>
 
               <form className="setup-form" onSubmit={handleAssignKit} noValidate>
@@ -477,7 +477,7 @@ function InvestigatorHome() {
                         ? selectedStrata.unassigned_count > 0
                           ? `${selectedStrata.unassigned_count} unassigned kit code(s) remain for this stratum at your site.`
                           : 'No unassigned kit codes remain for this stratum.'
-                        : 'Choose a stratum to unlock kit assignment.'}
+                        : 'Choose a stratum to unlock randomization.'}
                     </span>
                   </div>
 
@@ -499,7 +499,7 @@ function InvestigatorHome() {
                         <span>Attest that the patient meets inclusion/exclusion criteria</span>
                       </label>
                       <span className="field-hint">
-                        Select to review the study I/E criteria and confirm eligibility before assigning a kit code.
+                        Select to review the study I/E criteria and confirm eligibility before randomizing.
                       </span>
                     </div>
                   )}
@@ -507,12 +507,12 @@ function InvestigatorHome() {
 
                 <div className="form-actions" style={{ marginTop: '20px' }}>
                   <button
-                    id="btn-assign-kit"
+                    id="btn-randomize"
                     type="submit"
                     className="btn-primary"
                     disabled={submitting || !canAssign}
                   >
-                    {submitting ? 'Assigning Kit Code…' : 'Assign Kit Code'}
+                    {submitting ? 'Randomizing…' : 'Randomize'}
                   </button>
                 </div>
               </form>
