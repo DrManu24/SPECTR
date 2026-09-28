@@ -26,7 +26,7 @@ This protocol governs the internal technical verification, baseline functional s
 |---|---|---|---|---|---|
 | **TC-SMK-01** | Gate 1: Sanity | User authentication, dashboard initialization and site display | Manu Pradeep | 28-09-2026 | Pass |
 | **TC-SMK-02** | Gate 1: Sanity | Standard single-file sequence ingestion and table mapping | Manu Pradeep | 28-09-2026 | Pass |
-| **TC-SMK-03** | Gate 1: Sanity | End-to-end baseline allocation | — | — | Pending |
+| **TC-SMK-03** | Gate 1: Sanity | End-to-end baseline allocation | Manu Pradeep | 28-09-2026 | Pass |
 | **TC-SMK-04** | Gate 1: Sanity | On-demand allocation log and audit CSV export | — | — | Pending |
 | **TC-CON-01** | Gate 2: Concurrency | Row-locking under simultaneous bedside allocations | — | — | Pending |
 | **TC-IDM-01** | Gate 2: Resilience | Idempotency and double-click / network drop handling | — | — | Pending |
@@ -93,7 +93,7 @@ This protocol governs the internal technical verification, baseline functional s
   * Bedside interface displays immediate, immutable allocation modal with participant screening ID and treatment assignment.
   * Allocation transaction commits in under 1 second.
 * **Observed Result:** Entered screening ID 'AMP-001', selected stratum, checked all eligibility confirmations, and triggered 'Assign Kit Code (Randomize)'. Modal immediately returned allocation assignment 'Kit-A / Arm 1' with participant ID displayed, in under 1 second. Verified stratum sequence pointer advanced from N = 1 to N = 2.
-* **Sign-off:** Dr. Manu Pradeep (Clinical Epidemiologist) | Date: 28-09-2026 | Commit Hash:
+* **Sign-off:** Dr. Manu Pradeep (Clinical Epidemiologist) | Date: 28-09-2026 | Commit Hash: 8069d14
 
 ---
 
@@ -108,8 +108,8 @@ This protocol governs the internal technical verification, baseline functional s
   * Exported file matches current database state exactly.
   * Columns contain de-identified screening IDs, strata, allocation timestamps (UTC), operator IDs, and treatment codes.
   * Zero corruption or character encoding errors.
-* **Observed Result:**
-* **Sign-off:** Clinical Epidemiologist | Date: —
+* **Observed Result:** Triggered 'Export CSV' under 'Randomized Sequence Records' from the CTC interface. Downloaded CSV opened cleanly in UTF-8; contains complete historical rows matching current database state. Participant screening IDs, stratum names, UTC timestamps, operator user IDs, and treatment codes are intact with zero truncation or character corruption.
+* **Sign-off:** Dr. Manu Pradeep (Clinical Epidemiologist) | Date: Date: 28-09-2026 | Commit Hash:
 
 ---
 
