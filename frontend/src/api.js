@@ -62,12 +62,21 @@ export async function apiLogout(path) {
   return res.ok
 }
 
-function getCsrfToken() {
-  const stored = sessionStorage.getItem(CSRF_STORAGE_KEY)
-  if (stored) return stored
-
+function readCsrfCookie() {
   const match = document.cookie.match(/(?:^|;\s*)csrf_token=([^;]*)/)
   return match ? decodeURIComponent(match[1]) : ''
+}
+
+function getCsrfToken() {
+  // Prefer the cookie — it is shared across tabs (same-origin deploy).
+  const fromCookie = readCsrfCookie()
+  if (fromCookie) {
+    sessionStorage.setItem(CSRF_STORAGE_KEY, fromCookie)
+    return fromCookie
+  }
+
+  // Fallback when the cookie is not readable (e.g. cross-origin local dev).
+  return sessionStorage.getItem(CSRF_STORAGE_KEY) || ''
 }
 
 function mePathForApiPath(path) {
@@ -77,7 +86,7 @@ function mePathForApiPath(path) {
   return null
 }
 
-/** Fetch a fresh CSRF token when sessionStorage is empty (cross-origin dev). */
+/** Fetch a fresh CSRF token when neither cookie nor sessionStorage has one. */
 async function bootstrapCsrfIfNeeded(apiPath) {
   const existing = getCsrfToken()
   if (existing) return existing
