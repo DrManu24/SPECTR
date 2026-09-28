@@ -25,7 +25,7 @@ This protocol governs the internal technical verification, baseline functional s
 | Test Case ID | Gate / Category | Objective | Tester | Date | Status |
 |---|---|---|---|---|---|
 | **TC-SMK-01** | Gate 1: Sanity | User authentication, dashboard initialization and site display | Manu Pradeep | 28-09-2026 | Pass |
-| **TC-SMK-02** | Gate 1: Sanity | Standard single-file sequence ingestion and table mapping | — | — | Pending |
+| **TC-SMK-02** | Gate 1: Sanity | Standard single-file sequence ingestion and table mapping | Manu Pradeep | 28-09-2026 | Pass |
 | **TC-SMK-03** | Gate 1: Sanity | End-to-end baseline allocation | — | — | Pending |
 | **TC-SMK-04** | Gate 1: Sanity | On-demand allocation log and audit CSV export | — | — | Pending |
 | **TC-CON-01** | Gate 2: Concurrency | Row-locking under simultaneous bedside allocations | — | — | Pending |
@@ -77,7 +77,7 @@ This protocol governs the internal technical verification, baseline functional s
   * Active queue dashboard accurately reflects 100 unconsumed positions partitioned across specified strata.
   * Treatment labels remain masked to site-level accounts.
 * **Observed Result:** Uploaded 100-row CSV ('test_seq_100.csv') via CTC portal. File parsed without warnings; database committed exactly 100 sequence rows. Active queue summary displays 100 unconsumed rows partitioned across defined strata. Logged in under investigator account 'inv_Hospital_01' and verified treatment arm allocations remain masked and unexposed.
-* **Sign-off:** Dr. Manu Pradeep (Clinical Epidemiologist) | Date: 28-09-2026
+* **Sign-off:** Dr. Manu Pradeep (Clinical Epidemiologist) | Date: 28-09-2026 | Commit Hash: cbf9a6f
 
 ---
 
@@ -92,8 +92,8 @@ This protocol governs the internal technical verification, baseline functional s
   * System advances the active stratum sequence pointer from N = 1 to N = 2.
   * Bedside interface displays immediate, immutable allocation modal with participant screening ID and treatment assignment.
   * Allocation transaction commits in under 1 second.
-* **Observed Result:**
-* **Sign-off:** Clinical Epidemiologist | Date: —
+* **Observed Result:** Entered screening ID 'AMP-001', selected stratum, checked all eligibility confirmations, and triggered 'Assign Kit Code (Randomize)'. Modal immediately returned allocation assignment 'Kit-A / Arm 1' with participant ID displayed, in under 1 second. Verified stratum sequence pointer advanced from N = 1 to N = 2.
+* **Sign-off:** Dr. Manu Pradeep (Clinical Epidemiologist) | Date: 28-09-2026 | Commit Hash:
 
 ---
 
