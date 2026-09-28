@@ -549,6 +549,16 @@
   margin-bottom: 16px;
 }
 
+.info-msg {
+  font-size: 14px;
+  color: #92400e;
+  background: #fffbeb;
+  border: 1px solid #fcd34d;
+  border-radius: 4px;
+  padding: 10px 14px;
+  margin-bottom: 16px;
+}
+
 .kit-assigned-msg {
   text-align: center;
   padding: 20px 14px;

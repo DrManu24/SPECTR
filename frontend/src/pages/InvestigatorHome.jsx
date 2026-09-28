@@ -13,6 +13,12 @@ function formatExportDateTime(value) {
   return Number.isNaN(date.getTime()) ? '' : date.toISOString()
 }
 
+function formatAssignedAt(value) {
+  if (!value) return null
+  const date = new Date(value)
+  return Number.isNaN(date.getTime()) ? null : date.toLocaleString()
+}
+
 function redirectIfSessionExpired(res, navigate) {
   if (res.status === 401) {
     clearCsrfToken()
@@ -311,6 +317,7 @@ function InvestigatorHome() {
     && selectedStrata.unassigned_count > 0
     && (!requiresIeAttestation || ieAttested)
   )
+  const assignedAtLabel = assignedRecord ? formatAssignedAt(assignedRecord.assigned_at) : null
 
   function handleIeCheckboxChange() {
     if (ieAttested) {
@@ -393,11 +400,30 @@ function InvestigatorHome() {
                 {error && <p className="error">{error}</p>}
 
                 {assignedRecord && (
-                  <div className="success-msg kit-assigned-msg">
+                  <div
+                    className={
+                      assignedRecord.assignment_outcome === 'already_assigned'
+                        ? 'info-msg kit-assigned-msg'
+                        : 'success-msg kit-assigned-msg'
+                    }
+                  >
                     <div className="kit-assigned-msg__code">{assignedRecord.kit_code}</div>
                     <div className="kit-assigned-msg__detail">
-                      Kit code <code>{assignedRecord.kit_code}</code> assigned to {PARTICIPANT_LABEL.toLowerCase()}{' '}
-                      <strong>{assignedRecord.assigned_patient_id}</strong>.
+                      {assignedRecord.assignment_outcome === 'already_assigned' ? (
+                        <>
+                          {PARTICIPANT_LABEL} <strong>{assignedRecord.assigned_patient_id}</strong> was already
+                          assigned kit code <code>{assignedRecord.kit_code}</code>
+                          {assignedAtLabel && (
+                            <> on {assignedAtLabel}</>
+                          )}
+                          .
+                        </>
+                      ) : (
+                        <>
+                          Kit code <code>{assignedRecord.kit_code}</code> assigned to {PARTICIPANT_LABEL.toLowerCase()}{' '}
+                          <strong>{assignedRecord.assigned_patient_id}</strong>.
+                        </>
+                      )}
                     </div>
                   </div>
                 )}

@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Optional
+from typing import Literal, Optional
 
 from pydantic import BaseModel, field_validator
 
@@ -464,6 +464,10 @@ class CsvUploadResponse(BaseModel):
 class AssignKitRequest(BaseModel):
     patient_id: str
     strata_id: int
+
+
+class AssignKitResponse(RandomizationRecordOut):
+    assignment_outcome: Literal["created", "already_assigned"]
 
 
 class StrataAvailabilityOut(BaseModel):

@@ -1,5 +1,6 @@
 import logging
 from datetime import datetime, timezone
+from typing import Literal
 
 import bcrypt
 from fastapi import APIRouter, Cookie, Depends, HTTPException, Request, Response
@@ -40,6 +41,7 @@ from ..database import get_db
 from ..models import Investigator, RandomizationRecord, Site, Strata, Study
 from ..schemas import (
     AssignKitRequest,
+    AssignKitResponse,
     ChangePasswordRequest,
     InvestigatorForgotPasswordRequest,
     InvestigatorInfo,
@@ -86,6 +88,40 @@ def _investigator_record_out(
         assigned_at=record.assigned_at,
         unblinded_at=record.unblinded_at,
         blind=record.blind,
+    )
+
+
+def _assigner_fields(
+    record: RandomizationRecord,
+    assigner: Investigator | None = None,
+) -> tuple[str | None, str | None, str | None]:
+    """Resolve assigner metadata from the record's assigner, or an explicit override."""
+    investigator = assigner or record.assigned_by_investigator
+    if investigator is None:
+        return None, None, None
+    return investigator.username, investigator.name, investigator.email
+
+
+def _assign_kit_response(
+    record: RandomizationRecord,
+    assignment_outcome: Literal["created", "already_assigned"],
+    *,
+    blinding_type: int = BlindingType.PIB,
+    assigner: Investigator | None = None,
+) -> AssignKitResponse:
+    investigator_username, investigator_name, investigator_email = _assigner_fields(
+        record,
+        assigner,
+    )
+    return AssignKitResponse(
+        **_investigator_record_out(
+            record,
+            blinding_type=blinding_type,
+            investigator_username=investigator_username,
+            investigator_name=investigator_name,
+            investigator_email=investigator_email,
+        ).model_dump(),
+        assignment_outcome=assignment_outcome,
     )
 
 
@@ -307,7 +343,7 @@ def get_strata_availability(
     return availability
 
 
-@router.post("/assign-kit", response_model=RandomizationRecordOut)
+@router.post("/assign-kit", response_model=AssignKitResponse)
 @limiter.limit("30/minute")
 def assign_kit(
     request: Request,
@@ -378,6 +414,9 @@ def assign_kit(
         )
         if existing:
             record = existing
+            assignment_outcome = "already_assigned"
+            # Load assigner in a separate query — joinedload + FOR UPDATE is unsupported on PostgreSQL.
+            _ = record.assigned_by_investigator
         else:
             record = (
                 db.query(RandomizationRecord)
@@ -401,6 +440,7 @@ def assign_kit(
                 )
 
             is_new_allocation = True
+            assignment_outcome = "created"
             assigned_at = datetime.now(timezone.utc)
             record.assigned_patient_id = patient_id
             record.assigned_by_investigator_id = current_investigator.id
@@ -435,12 +475,11 @@ def assign_kit(
                 client_ip=request.client.host if request.client else None,
             )
 
-        response = _investigator_record_out(
+        response = _assign_kit_response(
             record,
+            assignment_outcome,
             blinding_type=study.blinding_type,
-            investigator_username=current_investigator.username,
-            investigator_name=current_investigator.name,
-            investigator_email=current_investigator.email,
+            assigner=current_investigator if assignment_outcome == "created" else None,
         )
         complete_idempotency(leader_row, response)
         db.commit()
@@ -451,6 +490,7 @@ def assign_kit(
         db.rollback()
         raced = (
             db.query(RandomizationRecord)
+            .options(joinedload(RandomizationRecord.assigned_by_investigator))
             .filter(
                 RandomizationRecord.study_id == study_id,
                 func.lower(RandomizationRecord.assigned_patient_id) == patient_id.lower(),
@@ -476,18 +516,17 @@ def assign_kit(
         if cached is not None:
             return cached
 
-        response = _investigator_record_out(
+        response = _assign_kit_response(
             raced,
+            "already_assigned",
             blinding_type=study.blinding_type,
-            investigator_username=current_investigator.username,
-            investigator_name=current_investigator.name,
-            investigator_email=current_investigator.email,
         )
         complete_idempotency(leader_row, response)
         db.commit()
         return response
     except Exception:
         db.rollback()
+        logger.exception("Unexpected error during kit assignment")
         raise HTTPException(
             status_code=500,
             detail="An unexpected error occurred while assigning the kit code.",

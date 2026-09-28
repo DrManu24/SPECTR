@@ -8,7 +8,7 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from ..models import IdempotencyRecord
-from ..schemas import RandomizationRecordOut
+from ..schemas import AssignKitResponse
 
 IDEMPOTENCY_HEADER = "Idempotency-Key"
 ASSIGN_KIT_ENDPOINT = "assign-kit"
@@ -42,7 +42,7 @@ def resolve_idempotency(
     key: str,
     endpoint: str,
     fingerprint: str,
-) -> tuple[RandomizationRecordOut | None, IdempotencyRecord | None]:
+) -> tuple[AssignKitResponse | None, IdempotencyRecord | None]:
     """
     Return a cached response for replays, or a new in-flight leader row.
 
@@ -66,10 +66,10 @@ def resolve_idempotency(
                     detail="Idempotency-Key was already used with a different request.",
                 )
             if row.response_json is not None:
-                return RandomizationRecordOut.model_validate(row.response_json), None
+                return AssignKitResponse.model_validate(row.response_json), None
             db.refresh(row)
             if row.response_json is not None:
-                return RandomizationRecordOut.model_validate(row.response_json), None
+                return AssignKitResponse.model_validate(row.response_json), None
             raise HTTPException(
                 status_code=500,
                 detail="Idempotent request did not complete.",
@@ -96,7 +96,7 @@ def resolve_idempotency(
 
 def complete_idempotency(
     leader_row: IdempotencyRecord,
-    response: RandomizationRecordOut,
+    response: AssignKitResponse,
 ) -> None:
     leader_row.response_json = response.model_dump(mode="json")
     leader_row.completed_at = datetime.now(timezone.utc)
