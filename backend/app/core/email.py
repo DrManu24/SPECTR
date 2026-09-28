@@ -274,6 +274,7 @@ def send_unblind_notification(
     patient_id: str,
     kit_code: str,
     treatment_name: str,
+    unblind_reason: str,
 ) -> None:
     subject = f"Emergency unblinding alert — {study_title}"
     name_line = (
@@ -297,6 +298,9 @@ Assignment:
   Patient ID    : {patient_id}
   Kit Code      : {kit_code}
   Treatment Arm : {treatment_name}
+
+Clinical Rationale:
+{unblind_reason.strip()}
 
 This event has been recorded in the audit log.
 

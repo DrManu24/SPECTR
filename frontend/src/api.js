@@ -14,8 +14,11 @@ const CSRF_EXEMPT_PATHS = new Set([
   '/investigator/login',
 ])
 
+const SESSION_INVALID_MESSAGE =
+  'Your session is no longer valid. Please refresh the page and sign in again.'
+
 export class CsrfError extends Error {
-  constructor(message = 'CSRF token unavailable. Please sign in again.') {
+  constructor(message = SESSION_INVALID_MESSAGE) {
     super(message)
     this.name = 'CsrfError'
   }
@@ -23,7 +26,10 @@ export class CsrfError extends Error {
 
 /** Normalize FastAPI error bodies (string detail or 422 validation array). */
 export function parseApiError(detail) {
-  if (typeof detail === 'string') return detail
+  if (typeof detail === 'string') {
+    if (detail === 'CSRF validation failed.') return SESSION_INVALID_MESSAGE
+    return detail
+  }
   if (Array.isArray(detail)) {
     return detail.map((item) => item.msg || item).join(', ')
   }

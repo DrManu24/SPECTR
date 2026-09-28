@@ -35,7 +35,12 @@ class CSRFMiddleware(BaseHTTPMiddleware):
         ):
             return JSONResponse(
                 status_code=403,
-                content={"detail": "CSRF validation failed."},
+                content={
+                    "detail": (
+                        "Your session is no longer valid. "
+                        "Please refresh the page and sign in again."
+                    )
+                },
             )
 
         return await call_next(request)

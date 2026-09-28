@@ -9,6 +9,8 @@ from .core.investigators import normalize_investigator_username
 
 PASSWORD_MIN_LENGTH = 12
 PASSWORD_MAX_LENGTH = 128
+UNBLIND_REASON_MIN_LENGTH = 10
+UNBLIND_REASON_MAX_LENGTH = 2000
 
 
 def validate_new_password(v: str) -> str:
@@ -412,6 +414,7 @@ class RandomizationRecordOut(BaseModel):
     assigned_by_investigator_email: Optional[str] = None
     assigned_at: Optional[datetime] = None
     unblinded_at: Optional[datetime] = None
+    unblind_reason: Optional[str] = None
     blind: bool = True
     site_id: Optional[int] = None
     strata_id: Optional[int] = None
@@ -476,6 +479,24 @@ class StrataAvailabilityOut(BaseModel):
     unassigned_count: int
 
 
+class UnblindRequest(BaseModel):
+    reason: str
+
+    @field_validator("reason")
+    @classmethod
+    def validate_reason(cls, v: str) -> str:
+        v = v.strip()
+        if len(v) < UNBLIND_REASON_MIN_LENGTH:
+            raise ValueError(
+                f"Unblind reason must be at least {UNBLIND_REASON_MIN_LENGTH} characters"
+            )
+        if len(v) > UNBLIND_REASON_MAX_LENGTH:
+            raise ValueError(
+                f"Unblind reason must be at most {UNBLIND_REASON_MAX_LENGTH} characters"
+            )
+        return v
+
+
 class UnblindResponse(BaseModel):
     record_id: int
     treatment_name: str
@@ -499,6 +520,7 @@ class AuditLogOut(BaseModel):
     ctc_username: str
     client_ip: Optional[str] = None
     assigned_at: datetime
+    unblind_reason: Optional[str] = None
     created_at: datetime
 
     model_config = {"from_attributes": True}

@@ -84,6 +84,7 @@ def list_audit_logs(
                 AuditLog.protocol_code.ilike(term),
                 AuditLog.kit_code.ilike(term),
                 AuditLog.site_investigator_username.ilike(term),
+                AuditLog.unblind_reason.ilike(term),
             )
         )
 

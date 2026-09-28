@@ -254,6 +254,8 @@ function StudyHome() {
         `${INVESTIGATOR_LABEL} Name`,
         `${INVESTIGATOR_LABEL} Email`,
         'Assigned Date',
+        'Unblinded At',
+        'Unblind Reason',
       ]
 
       const rows = records.map((rec) => [
@@ -271,6 +273,8 @@ function StudyHome() {
         rec.assigned_by_investigator_id ? (rec.assigned_by_investigator_name || '') : '',
         rec.assigned_by_investigator_id ? (rec.assigned_by_investigator_email || '') : '',
         rec.assigned_at ? new Date(rec.assigned_at).toISOString() : '',
+        rec.unblinded_at ? new Date(rec.unblinded_at).toISOString() : '',
+        rec.unblind_reason || '',
       ])
 
       const protocolSlug = study?.protocol_code
@@ -718,6 +722,8 @@ function StudyHome() {
                             <th>{INVESTIGATOR_LABEL} ID</th>
                             <th>{INVESTIGATOR_LABEL} Name</th>
                             <th>Assigned Date</th>
+                            <th>Unblinded At</th>
+                            <th>Unblind Reason</th>
                           </tr>
                         </thead>
                         <tbody>
@@ -764,6 +770,12 @@ function StudyHome() {
                               </td>
                               <td style={{ color: '#555' }}>
                                 {rec.assigned_at ? new Date(rec.assigned_at).toLocaleString() : '—'}
+                              </td>
+                              <td style={{ color: '#555' }}>
+                                {rec.unblinded_at ? new Date(rec.unblinded_at).toLocaleString() : '—'}
+                              </td>
+                              <td style={{ color: '#555', maxWidth: '220px', whiteSpace: 'pre-wrap' }}>
+                                {rec.unblind_reason || '—'}
                               </td>
                             </tr>
                           ))}

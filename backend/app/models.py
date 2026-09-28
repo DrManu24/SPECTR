@@ -225,6 +225,7 @@ class RandomizationRecord(Base):
     unblinded_at: Mapped[Optional[datetime]] = mapped_column(
         DateTime(timezone=True), nullable=True
     )
+    unblind_reason: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
     blind: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
     site_id: Mapped[Optional[int]] = mapped_column(
         Integer, ForeignKey("sites.id", ondelete="SET NULL"), nullable=True
@@ -268,6 +269,7 @@ class AuditLog(Base):
     blinding_type: Mapped[int] = mapped_column(SmallInteger, nullable=False)
     client_ip: Mapped[Optional[str]] = mapped_column(String(45), nullable=True)
     assigned_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    unblind_reason: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), nullable=False, server_default=func.now()
     )

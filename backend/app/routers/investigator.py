@@ -50,6 +50,7 @@ from ..schemas import (
     MessageResponse,
     RandomizationRecordOut,
     StrataAvailabilityOut,
+    UnblindRequest,
     UnblindResponse,
 )
 
@@ -87,6 +88,7 @@ def _investigator_record_out(
         assigned_by_investigator_email=investigator_email if has_assigner else None,
         assigned_at=record.assigned_at,
         unblinded_at=record.unblinded_at,
+        unblind_reason=record.unblind_reason,
         blind=record.blind,
     )
 
@@ -613,6 +615,7 @@ def get_assignments(
 def unblind_record(
     request: Request,
     record_id: int,
+    payload: UnblindRequest,
     db: Session = Depends(get_db),
     current_investigator: Investigator = Depends(get_current_investigator),
 ):
@@ -634,6 +637,8 @@ def unblind_record(
     )
     if not record:
         raise HTTPException(status_code=404, detail="Assigned record not found.")
+    if not record.blind:
+        raise HTTPException(status_code=409, detail="This record has already been unblinded.")
 
     study = (
         db.query(Study)
@@ -662,6 +667,7 @@ def unblind_record(
     unblinded_at = datetime.now(timezone.utc)
     record.blind = False
     record.unblinded_at = unblinded_at
+    record.unblind_reason = payload.reason
 
     log_emergency_unblind(
         db,
@@ -673,6 +679,7 @@ def unblind_record(
         study_status=study.status,
         unblinded_at=unblinded_at,
         client_ip=request.client.host if request.client else None,
+        unblind_reason=payload.reason,
     )
 
     db.commit()
@@ -685,6 +692,7 @@ def unblind_record(
         record_id=record.id,
         patient_id=record.assigned_patient_id,
         treatment_name=record.treatment_name,
+        reason=payload.reason,
         ip=request.client.host if request.client else None,
     )
 
@@ -701,6 +709,7 @@ def unblind_record(
                 patient_id=record.assigned_patient_id or "",
                 kit_code=record.kit_code,
                 treatment_name=record.treatment_name,
+                unblind_reason=payload.reason,
             )
         except Exception:
             logger.exception(

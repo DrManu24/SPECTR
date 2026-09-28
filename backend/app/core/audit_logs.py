@@ -22,6 +22,7 @@ def _append_audit_log(
     study_status: str,
     event_at: datetime,
     client_ip: str | None,
+    unblind_reason: str | None = None,
 ) -> None:
     organizer = study.organizer
     db.add(
@@ -49,6 +50,7 @@ def _append_audit_log(
             blinding_type=study.blinding_type,
             client_ip=client_ip,
             assigned_at=event_at,
+            unblind_reason=unblind_reason,
         )
     )
 
@@ -91,6 +93,7 @@ def log_emergency_unblind(
     study_status: str,
     unblinded_at: datetime,
     client_ip: str | None,
+    unblind_reason: str,
 ) -> None:
     """Persist an immutable snapshot of an emergency unblinding event."""
     _append_audit_log(
@@ -104,4 +107,5 @@ def log_emergency_unblind(
         study_status=study_status,
         event_at=unblinded_at,
         client_ip=client_ip,
+        unblind_reason=unblind_reason,
     )

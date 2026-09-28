@@ -114,7 +114,7 @@ function AdminAuditLogs() {
                 type="search"
                 value={searchInput}
                 onChange={(e) => setSearchInput(e.target.value)}
-                placeholder={`${PARTICIPANT_LABEL} ID, protocol, kit, investigator`}
+                placeholder={`${PARTICIPANT_LABEL} ID, protocol, kit, investigator, reason`}
               />
             </div>
             <button type="submit" className="btn-secondary" style={{ alignSelf: 'flex-end' }}>
@@ -169,6 +169,7 @@ function AdminAuditLogs() {
                     <th>Site</th>
                     <th>{INVESTIGATOR_LABEL}</th>
                     <th>{ORGANIZER_LABEL}</th>
+                    <th>Reason</th>
                     <th>IP</th>
                   </tr>
                 </thead>
@@ -192,6 +193,9 @@ function AdminAuditLogs() {
                       <td>{log.site_name || '—'}</td>
                       <td>{log.site_investigator_username || '—'}</td>
                       <td>{log.ctc_username || '—'}</td>
+                      <td style={{ maxWidth: '240px', whiteSpace: 'pre-wrap', color: '#444' }}>
+                        {log.unblind_reason || '—'}
+                      </td>
                       <td style={{ color: '#666' }}>{log.client_ip || '—'}</td>
                     </tr>
                   ))}

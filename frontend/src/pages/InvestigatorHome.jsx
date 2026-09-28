@@ -96,6 +96,7 @@ function InvestigatorHome() {
   // Emergency unblinding state
   const [unblindedRecords, setUnblindedRecords] = useState({})
   const [unblindModalRecord, setUnblindModalRecord] = useState(null)
+  const [unblindReason, setUnblindReason] = useState('')
   const [unblindError, setUnblindError] = useState(null)
   const [unblindingSubmitting, setUnblindingSubmitting] = useState(false)
   const [revealedPbArms, setRevealedPbArms] = useState({})
@@ -216,23 +217,31 @@ function InvestigatorHome() {
 
   function handleOpenUnblindModal(rec) {
     setUnblindError(null)
+    setUnblindReason('')
     setUnblindModalRecord(rec)
   }
 
   function handleCloseUnblindModal() {
     if (unblindingSubmitting) return
     setUnblindModalRecord(null)
+    setUnblindReason('')
     setUnblindError(null)
   }
 
   async function handleConfirmUnblind() {
     if (!unblindModalRecord) return
+    const trimmedReason = unblindReason.trim()
+    if (trimmedReason.length < 10) {
+      setUnblindError('Please enter a clinical rationale of at least 10 characters.')
+      return
+    }
     setUnblindError(null)
     setUnblindingSubmitting(true)
 
     try {
       const res = await apiFetch(`/investigator/records/${unblindModalRecord.id}/unblind`, {
         method: 'POST',
+        json: { reason: trimmedReason },
       })
       const data = await res.json()
 
@@ -276,6 +285,7 @@ function InvestigatorHome() {
       `${INVESTIGATOR_LABEL} Email`,
       'Assigned At',
       'Unblinded At',
+      'Unblind Reason',
       'Treatment Arm',
     ]
 
@@ -288,6 +298,7 @@ function InvestigatorHome() {
       rec.assigned_by_investigator_id ? (rec.assigned_by_investigator_email || '') : '',
       formatExportDateTime(rec.assigned_at),
       formatExportDateTime(rec.unblinded_at),
+      rec.unblind_reason || '',
       getTreatmentArmForExport(rec),
     ])
 
@@ -317,6 +328,7 @@ function InvestigatorHome() {
     && selectedStrata.unassigned_count > 0
     && (!requiresIeAttestation || ieAttested)
   )
+  const unblindReasonValid = unblindReason.trim().length >= 10
   const assignedAtLabel = assignedRecord ? formatAssignedAt(assignedRecord.assigned_at) : null
 
   function handleIeCheckboxChange() {
@@ -573,6 +585,7 @@ function InvestigatorHome() {
                         <th>Kit Code</th>
                         <th>Assigned By</th>
                         <th>Treatment Arm</th>
+                        <th>Unblind Reason</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -622,6 +635,9 @@ function InvestigatorHome() {
                             ) : (
                               <span>{rec.treatment_name}</span>
                             )}
+                          </td>
+                          <td style={{ maxWidth: '220px', whiteSpace: 'pre-wrap' }}>
+                            {rec.unblind_reason || ''}
                           </td>
                         </tr>
                       ))}
@@ -693,6 +709,34 @@ function InvestigatorHome() {
               <strong>Notice:</strong> This unblinding event will be permanently recorded in the audit log and made visible to the study {ORGANIZER_LABEL}.
             </p>
 
+            <div className="field" style={{ margin: '0 0 16px' }}>
+              <label htmlFor="unblind-reason" style={{ fontSize: '13px', fontWeight: 600 }}>
+                Clinical rationale (required)
+              </label>
+              <textarea
+                id="unblind-reason"
+                value={unblindReason}
+                onChange={(e) => setUnblindReason(e.target.value)}
+                rows={4}
+                maxLength={2000}
+                placeholder="Describe the clinical reason for this emergency unblinding."
+                disabled={unblindingSubmitting}
+                style={{
+                  width: '100%',
+                  marginTop: '6px',
+                  padding: '8px 10px',
+                  fontSize: '13px',
+                  border: '1px solid #ccc',
+                  borderRadius: '4px',
+                  resize: 'vertical',
+                  boxSizing: 'border-box',
+                }}
+              />
+              <div style={{ fontSize: '12px', color: '#666', marginTop: '4px' }}>
+                Minimum 10 characters ({unblindReason.trim().length}/10)
+              </div>
+            </div>
+
             {unblindError && (
               <p className="error" style={{ marginBottom: '16px' }}>
                 {unblindError}
@@ -712,7 +756,7 @@ function InvestigatorHome() {
                 type="button"
                 className="btn-danger"
                 onClick={handleConfirmUnblind}
-                disabled={unblindingSubmitting}
+                disabled={unblindingSubmitting || !unblindReasonValid}
               >
                 {unblindingSubmitting ? 'Unblinding…' : 'Confirm Unblind'}
               </button>
