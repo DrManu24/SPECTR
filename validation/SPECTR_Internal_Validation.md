@@ -22,9 +22,9 @@ This protocol governs the internal technical verification, baseline functional s
 
 ## 2. Test Execution Log
 
-| Test Case ID | Gate / Category | Objective | Tester | Target Date | Status |
+| Test Case ID | Gate / Category | Objective | Tester | Date | Status |
 |---|---|---|---|---|---|
-| **TC-SMK-01** | Gate 1: Sanity | User authentication, dashboard initialization and site display | — | — | Pending |
+| **TC-SMK-01** | Gate 1: Sanity | User authentication, dashboard initialization and site display | Manu Pradeep | 28-09-2026 | Pass |
 | **TC-SMK-02** | Gate 1: Sanity | Standard single-file sequence ingestion and table mapping | — | — | Pending |
 | **TC-SMK-03** | Gate 1: Sanity | End-to-end baseline allocation | — | — | Pending |
 | **TC-SMK-04** | Gate 1: Sanity | On-demand allocation log and audit CSV export | — | — | Pending |
@@ -76,8 +76,8 @@ This protocol governs the internal technical verification, baseline functional s
   * File parsed with zero schema warnings; database commits exactly 100 sequence rows.
   * Active queue dashboard accurately reflects 100 unconsumed positions partitioned across specified strata.
   * Treatment labels remain masked to site-level accounts.
-* **Observed Result:**
-* **Sign-off:** Clinical Epidemiologist | Date: —
+* **Observed Result:** Uploaded 100-row CSV ('test_seq_100.csv') via CTC portal. File parsed without warnings; database committed exactly 100 sequence rows. Active queue summary displays 100 unconsumed rows partitioned across defined strata. Logged in under investigator account 'inv_Hospital_01' and verified treatment arm allocations remain masked and unexposed.
+* **Sign-off:** Dr. Manu Pradeep (Clinical Epidemiologist) | Date: 28-09-2026
 
 ---
 
