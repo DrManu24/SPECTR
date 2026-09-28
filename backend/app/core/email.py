@@ -3,6 +3,7 @@ import logging
 import smtplib
 import urllib.error
 import urllib.request
+from datetime import datetime, timezone
 from email.message import EmailMessage
 
 from ..config import (
@@ -23,6 +24,33 @@ from ..config import (
 )
 
 logger = logging.getLogger(__name__)
+
+
+def _format_event_timestamp(event_at: datetime) -> str:
+    if event_at.tzinfo is None:
+        event_at = event_at.replace(tzinfo=timezone.utc)
+    return event_at.astimezone(timezone.utc).strftime("%Y-%m-%d %H:%M:%S UTC")
+
+
+def _investigator_section(
+    *,
+    investigator_username: str,
+    investigator_email: str,
+    investigator_name: str | None,
+    event_at: datetime,
+) -> str:
+    name_line = (
+        f"  Name     : {investigator_name.strip()}\n"
+        if investigator_name and investigator_name.strip()
+        else ""
+    )
+    return (
+        f"'Site Investigator':\n"
+        f"  Username : {investigator_username}\n"
+        f"  Email    : {investigator_email}\n"
+        f"{name_line}"
+        f"  Date     : {_format_event_timestamp(event_at)}\n"
+    )
 
 
 def _zeptomail_auth_header() -> str:
@@ -229,6 +257,10 @@ def send_participant_allocation_notification(
     protocol_code: str,
     patient_id: str,
     kit_code: str,
+    investigator_username: str,
+    investigator_email: str,
+    investigator_name: str | None,
+    assigned_at: datetime,
     site_name: str | None = None,
     stratum_name: str | None = None,
 ) -> None:
@@ -243,6 +275,12 @@ def send_participant_allocation_notification(
         if stratum_name and stratum_name.strip()
         else ""
     )
+    investigator_section = _investigator_section(
+        investigator_username=investigator_username,
+        investigator_email=investigator_email,
+        investigator_name=investigator_name,
+        event_at=assigned_at,
+    )
 
     body = f"""Hello,
 
@@ -251,6 +289,7 @@ This is to confirm that a participant has been allocated in your study.
 Study: {study_title}
 Protocol: {protocol_code.strip()}
 
+{investigator_section}
 Allocation:
   Participant ID : {patient_id}
   Kit Code       : {kit_code}
@@ -271,16 +310,18 @@ def send_unblind_notification(
     investigator_username: str,
     investigator_email: str,
     investigator_name: str | None,
+    unblinded_at: datetime,
     patient_id: str,
     kit_code: str,
     treatment_name: str,
     unblind_reason: str,
 ) -> None:
     subject = f"Emergency unblinding alert — {study_title}"
-    name_line = (
-        f"  Name     : {investigator_name.strip()}\n"
-        if investigator_name and investigator_name.strip()
-        else ""
+    investigator_section = _investigator_section(
+        investigator_username=investigator_username,
+        investigator_email=investigator_email,
+        investigator_name=investigator_name,
+        event_at=unblinded_at,
     )
 
     body = f"""Hello,
@@ -290,10 +331,7 @@ A 'Site Investigator' has performed an emergency unblinding on a study assignmen
 Study: {study_title}
 Protocol: {protocol_code.strip()}
 
-'Site Investigator':
-  Username : {investigator_username}
-  Email    : {investigator_email}
-{name_line}
+{investigator_section}
 Assignment:
   Patient ID    : {patient_id}
   Kit Code      : {kit_code}

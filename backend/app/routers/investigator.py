@@ -561,6 +561,10 @@ def assign_kit(
                         protocol_code=study.protocol_code,
                         patient_id=patient_id,
                         kit_code=record.kit_code,
+                        investigator_username=current_investigator.username,
+                        investigator_email=current_investigator.email,
+                        investigator_name=current_investigator.name,
+                        assigned_at=record.assigned_at,
                         site_name=site_name or None,
                         stratum_name=strata.name,
                     )
@@ -706,6 +710,7 @@ def unblind_record(
                 investigator_username=current_investigator.username,
                 investigator_email=current_investigator.email,
                 investigator_name=current_investigator.name,
+                unblinded_at=record.unblinded_at,
                 patient_id=record.assigned_patient_id or "",
                 kit_code=record.kit_code,
                 treatment_name=record.treatment_name,
