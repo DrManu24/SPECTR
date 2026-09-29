@@ -24,10 +24,10 @@ This protocol governs the internal technical verification, baseline functional s
 
 | Test Case ID | Gate / Category | Objective | Tester | Date | Status |
 |---|---|---|---|---|---|
-| **TC-SMK-01** | Gate 1: Sanity | User authentication, dashboard initialization and site display | — | — | Pending |
-| **TC-SMK-02** | Gate 1: Sanity | Standard single-file sequence ingestion and table mapping | — | — | Pending |
-| **TC-SMK-03** | Gate 1: Sanity | End-to-end baseline allocation | — | — | Pending |
-| **TC-SMK-04** | Gate 1: Sanity | On-demand allocation log and audit CSV export | — | — | Pending |
+| **TC-SMK-01** | Gate 1: Sanity | User authentication, dashboard initialization and site display | Manu Pradeep | 28-09-2026 | Pass |
+| **TC-SMK-02** | Gate 1: Sanity | Standard single-file sequence ingestion and table mapping | Manu Pradeep | 28-09-2026 | Pass |
+| **TC-SMK-03** | Gate 1: Sanity | End-to-end baseline allocation | Manu Pradeep | 28-09-2026 | Pass |
+| **TC-SMK-04** | Gate 1: Sanity | On-demand allocation log and audit CSV export | Manu Pradeep | 28-09-2026 | Pass |
 | **TC-CON-01** | Gate 2: Concurrency | Row-locking under simultaneous bedside allocations | — | — | Pending |
 | **TC-IDM-01** | Gate 2: Resilience | Idempotency and double-click / network drop handling | — | — | Pending |
 | **TC-CNC-01** | Gate 2: Concealment | Zero sequence pre-fetching or client-side DOM/state leakage | — | — | Pending |
@@ -36,7 +36,7 @@ This protocol governs the internal technical verification, baseline functional s
 | **TC-VAL-01** | Gate 2: Data Integrity | Duplicate Participant ID entry prevention | — | — | Pending |
 | **TC-CLK-01** | Gate 2: Data Integrity | Server-side UTC enforcement against client clock tampering | — | — | Pending |
 | **TC-AUD-01** | Gate 2: Regulatory | Audit trail immutability and append-only database permissions | — | — | Pending |
-| **TC-BND-01** | Gate 3: Boundary | Graceful handling of stratum capacity exhaustion | — | — | Pending |
+| **TC-BND-01** | Gate 3: Boundary | Graceful handling of stratum capacity exhaustion | Manu Pradeep | 28-09-2026 | Pass |
 | **TC-ING-01** | Gate 3: Ingestion | Schema and syntax validation of malformed sequence files | — | — | Pending |
 | **TC-REC-01** | Gate 3: Resilience | Database snapshot restoration and data integrity (ICH-GCP 5.5.3 f) | — | — | Pending |
 | **TC-SES-01** | Gate 3: Session Security | Mid-form authentication expiration and safe failure | — | — | Pending |
@@ -76,8 +76,8 @@ This protocol governs the internal technical verification, baseline functional s
   * File parsed with zero schema warnings; database commits exactly 100 sequence rows.
   * Active queue dashboard accurately reflects 100 unconsumed positions partitioned across specified strata.
   * Treatment labels remain masked to site-level accounts.
-* **Observed Result:**
-* **Sign-off:** Clinical Epidemiologist | Date: —
+* **Observed Result:** Uploaded 100-row CSV ('test_seq_100.csv') via CTC portal. File parsed without warnings; database committed exactly 100 sequence rows. Active queue summary displays 100 unconsumed rows partitioned across defined strata. Logged in under investigator account 'inv_Hospital_01' and verified treatment arm allocations remain masked and unexposed.
+* **Sign-off:** Dr. Manu Pradeep (Clinical Epidemiologist) | Date: 28-09-2026 | Commit Hash: cbf9a6f
 
 ---
 
@@ -92,8 +92,8 @@ This protocol governs the internal technical verification, baseline functional s
   * System advances the active stratum sequence pointer from N = 1 to N = 2.
   * Bedside interface displays immediate, immutable allocation modal with participant screening ID and treatment assignment.
   * Allocation transaction commits in under 1 second.
-* **Observed Result:**
-* **Sign-off:** Clinical Epidemiologist | Date: —
+* **Observed Result:** Entered screening ID 'AMP-001', selected stratum, checked all eligibility confirmations, and triggered 'Assign Kit Code (Randomize)'. Modal immediately returned allocation assignment 'Kit-A / Arm 1' with participant ID displayed, in under 1 second. Verified stratum sequence pointer advanced from N = 1 to N = 2.
+* **Sign-off:** Dr. Manu Pradeep (Clinical Epidemiologist) | Date: 28-09-2026 | Commit Hash: 8069d14
 
 ---
 
@@ -108,8 +108,8 @@ This protocol governs the internal technical verification, baseline functional s
   * Exported file matches current database state exactly.
   * Columns contain de-identified screening IDs, strata, allocation timestamps (UTC), operator IDs, and treatment codes.
   * Zero corruption or character encoding errors.
-* **Observed Result:**
-* **Sign-off:** Clinical Epidemiologist | Date: —
+* **Observed Result:** Triggered 'Export CSV' under 'Randomized Sequence Records' from the CTC interface. Downloaded CSV opened cleanly in UTF-8; contains complete historical rows matching current database state. Participant screening IDs, stratum names, UTC timestamps, operator user IDs, and treatment codes are intact with zero truncation or character corruption.
+* **Sign-off:** Dr. Manu Pradeep (Clinical Epidemiologist) | Date: Date: 28-09-2026 | Commit Hash: 3c57571
 
 ---
 
@@ -240,9 +240,12 @@ This protocol governs the internal technical verification, baseline functional s
   1. Ingest a minimal test sequence of length N = 4 for a mock stratum.
   2. Execute 4 sequential allocations.
   3. Trigger a 5th allocation request.
-* **Pass Criteria:** System displays explicit modal: `Stratum allocation capacity reached. Contact Central Trial Coordinator.` No unhandled 500 exceptions.
-* **Observed Result:**
-* **Sign-off:** Clinical Epidemiologist | Date: —
+* **Pass Criteria:** 
+  1. Site Investigator dashboard immediately updates to disable the exhausted option, rendering it greyed out with explicit label text: Stratum 1 (0 Available).
+  2. Form prevents submission for the exhausted stratum.
+  3. Server-side API rejects any direct POST request targeting the exhausted stratum with an explicit error message (No unassigned kit codes remaining for stratum 'Strata 1' at this site); zero        sequence counter corruption or unhandled 500 server crashes.
+* **Observed Result:** Ingested test sequence with 4 available rows. Executed 4 successful allocations. Upon reaching row 4, the point-of-care selector immediately updated to grey out the exhausted stratum, rendering the label as 'Stratum 1 (0 Available)' and disabling form submission. Dispatched a direct POST request targeting the exhausted stratum; API safely returned HTTP 400 with message 'No unassigned kit codes remaining for stratum 'Strata 1' at this site.' Sequence counter remained locked at 4 with zero over-allocation or server crashes.
+* **Sign-off:** Dr. Manu Pradeep (Clinical Epidemiologist) | Date: 28-09-2026 | Commit Hash:
 
 ---
 
