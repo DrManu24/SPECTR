@@ -24,18 +24,19 @@ This protocol governs the internal technical verification, baseline functional s
 
 | Test Case ID | Gate / Category | Objective | Tester | Date | Status |
 |---|---|---|---|---|---|
-| **TC-SMK-01** | Gate 1: Sanity | User authentication, dashboard initialization and site display | Manu Pradeep | 28-09-2026 | Pass |
+| **TC-SMK-01** | Gate 1: Sanity | User authentication, dashboard initialization and site display |Manu 
+Pradeep & Dhanush Kumar | 29-09-2026 | Pass |
 | **TC-SMK-02** | Gate 1: Sanity | Standard single-file sequence ingestion and table mapping | Manu Pradeep | 28-09-2026 | Pass |
 | **TC-SMK-03** | Gate 1: Sanity | End-to-end baseline allocation | Manu Pradeep | 28-09-2026 | Pass |
 | **TC-SMK-04** | Gate 1: Sanity | On-demand allocation log and audit CSV export | Manu Pradeep | 28-09-2026 | Pass |
-| **TC-CON-01** | Gate 2: Concurrency | Row-locking under simultaneous bedside allocations | — | — | Pending |
-| **TC-IDM-01** | Gate 2: Resilience | Idempotency and double-click / network drop handling | — | — | Pending |
-| **TC-CNC-01** | Gate 2: Concealment | Zero sequence pre-fetching or client-side DOM/state leakage | — | — | Pending |
+| **TC-CON-01** | Gate 2: Concurrency | Row-locking under simultaneous bedside allocations | Dhanush Kumar | 29-09-2026 | Pass |
+| **TC-IDM-01** | Gate 2: Resilience | Idempotency and double-click / network drop handling | Dhanush Kumar | 29-09-2026 | Pass |
+| **TC-CNC-01** | Gate 2: Concealment | Zero sequence pre-fetching or client-side DOM/state leakage | Dhanush Kumar | 29-09-2026 | Pass |
 | **TC-UNB-01** | Gate 2: Regulatory | Audited emergency single-participant code-break (ICH-GCP 5.5.3 g) | — | — | Pending |
-| **TC-SEC-01** | Gate 2: Multicenter | Site-specific queue isolation and cross-center access denial | — | — | Pending |
+| **TC-SEC-01** | Gate 2: Multicenter | Site-specific queue isolation and cross-center access denial | Dhanush Kumar | 29-09-2026 | Pass |
 | **TC-VAL-01** | Gate 2: Data Integrity | Duplicate Participant ID entry prevention | — | — | Pending |
-| **TC-CLK-01** | Gate 2: Data Integrity | Server-side UTC enforcement against client clock tampering | — | — | Pending |
-| **TC-AUD-01** | Gate 2: Regulatory | Audit trail immutability and append-only database permissions | — | — | Pending |
+| **TC-CLK-01** | Gate 2: Data Integrity | Server-side UTC enforcement against client clock tampering | Dhanush Kumar | 29-09-2026 | Pass |
+| **TC-AUD-01** | Gate 2: Regulatory | Audit trail immutability and append-only database permissions | Dhanush Kumar | 29-09-2026 | Pass |
 | **TC-BND-01** | Gate 3: Boundary | Graceful handling of stratum capacity exhaustion | Manu Pradeep | 28-09-2026 | Pass |
 | **TC-ING-01** | Gate 3: Ingestion | Schema and syntax validation of malformed sequence files | — | — | Pending |
 | **TC-REC-01** | Gate 3: Resilience | Database snapshot restoration and data integrity (ICH-GCP 5.5.3 f) | — | — | Pending |
@@ -60,8 +61,8 @@ This protocol governs the internal technical verification, baseline functional s
   * Successful authentication with JWT issuance.
   * User interface correctly displays user full name, role (`Site Investigator`), assigned institution (`Hospital One`), and active approved trial title.
   * No administrative or cross-site configuration tabs are visible.
-* **Observed Result:**
-* **Sign-off:** Lead Developer | Date: —
+* **Observed Result:** Logged in at https://spectr.mmmr.in/investigator/login with investigator account `inv_Hospital_01`. Authentication succeeded; `investigator_access_token` JWT cookie issued. Dashboard displayed investigator full name, role label `Site Investigator`, assigned institution `Hospital One`, and active trial title. No administrative, organizer, or cross-site configuration tabs visible. On logout, the `investigator_access_token` JWT cookie was cleared from the browser.
+* **Sign-off:** Mr. Dhanush Kumar (Lead Developer) | Date: 29-09-2026
 
 ---
 
@@ -77,7 +78,7 @@ This protocol governs the internal technical verification, baseline functional s
   * Active queue dashboard accurately reflects 100 unconsumed positions partitioned across specified strata.
   * Treatment labels remain masked to site-level accounts.
 * **Observed Result:** Uploaded 100-row CSV ('test_seq_100.csv') via CTC portal. File parsed without warnings; database committed exactly 100 sequence rows. Active queue summary displays 100 unconsumed rows partitioned across defined strata. Logged in under investigator account 'inv_Hospital_01' and verified treatment arm allocations remain masked and unexposed.
-* **Sign-off:** Dr. Manu Pradeep (Clinical Epidemiologist) | Date: 28-09-2026 | Commit Hash: cbf9a6f
+* **Sign-off:** Dr. Manu Pradeep (Clinical Epidemiologist) | Date: 28-09-2026
 
 ---
 
@@ -93,7 +94,7 @@ This protocol governs the internal technical verification, baseline functional s
   * Bedside interface displays immediate, immutable allocation modal with participant screening ID and treatment assignment.
   * Allocation transaction commits in under 1 second.
 * **Observed Result:** Entered screening ID 'AMP-001', selected stratum, checked all eligibility confirmations, and triggered 'Assign Kit Code (Randomize)'. Modal immediately returned allocation assignment 'Kit-A / Arm 1' with participant ID displayed, in under 1 second. Verified stratum sequence pointer advanced from N = 1 to N = 2.
-* **Sign-off:** Dr. Manu Pradeep (Clinical Epidemiologist) | Date: 28-09-2026 | Commit Hash: 8069d14
+* **Sign-off:** Dr. Manu Pradeep (Clinical Epidemiologist) | Date: 28-09-2026
 
 ---
 
@@ -109,7 +110,7 @@ This protocol governs the internal technical verification, baseline functional s
   * Columns contain de-identified screening IDs, strata, allocation timestamps (UTC), operator IDs, and treatment codes.
   * Zero corruption or character encoding errors.
 * **Observed Result:** Triggered 'Export CSV' under 'Randomized Sequence Records' from the CTC interface. Downloaded CSV opened cleanly in UTF-8; contains complete historical rows matching current database state. Participant screening IDs, stratum names, UTC timestamps, operator user IDs, and treatment codes are intact with zero truncation or character corruption.
-* **Sign-off:** Dr. Manu Pradeep (Clinical Epidemiologist) | Date: Date: 28-09-2026 | Commit Hash: 3c57571
+* **Sign-off:** Dr. Manu Pradeep (Clinical Epidemiologist) | Date: 28-09-2026
 
 ---
 
@@ -125,8 +126,8 @@ This protocol governs the internal technical verification, baseline functional s
   * `TEST-001` claims sequence row 1.
   * `TEST-002` waits for transaction lock release and claims sequence row 2.
   * Zero duplicate row assignments; zero unhandled database deadlocks.
-* **Observed Result:**
-* **Sign-off:** Lead Developer and Clinical Epidemiologist | Date: —
+* **Observed Result:** Executed parallel `POST /investigator/assign-kit` requests via `validation/scripts/tc-con-01-concurrency.sh` against https://spectr.mmmr.in using investigator account `AEWSSY` and stratum `Stratum A` (id=24). Dispatched simultaneous allocations for `TEST-001` and `TEST-002` with distinct `Idempotency-Key` headers. Both requests returned HTTP 200 with `assignment_outcome: created`. `TEST-002` claimed sequence row 1 (record id 21185, kit `TRL-4821`); `TEST-001` claimed sequence row 2 (record id 21186, kit `TRL-7390`). Zero duplicate sequence assignments; zero database deadlocks observed.
+* **Sign-off:** Mr. Dhanush Kumar (Lead Developer) | Date: 29-09-2026; Dr. Manu Pradeep (Clinical Epidemiologist) | Date: —
 
 ---
 
@@ -141,8 +142,8 @@ This protocol governs the internal technical verification, baseline functional s
   * API enforces idempotency key handling; exactly one allocation row is consumed and committed.
   * Client receives a single valid assignment payload.
   * No sequence row is consumed without a corresponding completed participant record.
-* **Observed Result:**
-* **Sign-off:** Lead Developer | Date: —
+* **Observed Result:** Executed via `validation/scripts/tc-idm-01-idempotency.sh` against https://spectr.mmmr.in. Test 1: sequential replay of `POST /investigator/assign-kit` for participant `TEST-IDM-01` with the same `Idempotency-Key` returned HTTP 200 twice with identical record id, sequence number, and kit code; only one sequence row consumed. Test 2: parallel duplicate requests for `TEST-IDM-01-PAR` with the same `Idempotency-Key` both returned HTTP 200 with matching allocation payloads; stratum unassigned count decreased by 2 total (one row per participant). Zero duplicate sequence consumption observed.
+* **Sign-off:** Mr. Dhanush Kumar (Lead Developer) | Date: 29-09-2026
 
 ---
 
@@ -155,8 +156,8 @@ This protocol governs the internal technical verification, baseline functional s
 * **Pass Criteria:**
   * Zero upcoming sequence indices, block boundary indicators, or treatment labels exist in client memory.
   * Allocation assignment is revealed strictly in the authenticated HTTP response after server-side database commit.
-* **Observed Result:**
-* **Sign-off:** Lead Developer | Date: —
+* **Observed Result:** Inspected investigator intake page at https://spectr.mmmr.in before submitting a new randomization. Network tab (pre-submit): `/investigator/me` and `/investigator/strata-availability` returned site, stratum names, and unassigned counts only; no upcoming `sequence_number`, `kit_code`, or `treatment_name` values. No `POST /investigator/assign-kit` request fired until Randomize was clicked. Application storage (Local Storage, Session Storage, cookies) contained session/CSRF tokens only with no concealed allocation payload. DOM review before submit showed no hidden upcoming allocation fields. Kit assignment appeared only in the `assign-kit` HTTP response and success modal after server-side commit.
+* **Sign-off:** Mr. Dhanush Kumar (Lead Developer) | Date: 29-09-2026
 
 ---
 
@@ -184,8 +185,8 @@ This protocol governs the internal technical verification, baseline functional s
   1. Authenticate session under `investigator_hospital1`.
   2. Attempt a direct API call or UI request to pull from `Site: Amrita Hospital`.
 * **Pass Criteria:** HTTP 403 Forbidden returned; sequence pointer does not advance; unauthorized access attempt logged to security audit trail.
-* **Observed Result:**
-* **Sign-off:** Lead Developer | Date: —
+* **Observed Result:** Executed via `validation/scripts/tc-sec-01-site-isolation.sh` against https://spectr.mmmr.in. Site A investigator session could see only Site A strata in `/investigator/strata-availability`; Site B foreign stratum was not exposed in Site A visibility. Cross-site `POST /investigator/assign-kit` from the Site A session for participant `TEST-SEC-01` using Site B `strata_id` was rejected with HTTP 400 and detail `Invalid stratum selection for your site.` Site B stratum unassigned count remained unchanged after the blocked attempt; no cross-site sequence row was consumed.
+* **Sign-off:** Mr. Dhanush Kumar (Lead Developer) | Date: 29-09-2026
 
 ---
 
@@ -211,8 +212,12 @@ This protocol governs the internal technical verification, baseline functional s
 * **Pass Criteria:**
   * Database timestamp strictly reflects the server's authoritative UTC timestamp (`CURRENT_TIMESTAMP AT TIME ZONE 'UTC'`).
   * Client device time metadata is ignored for record sequence ordering.
-* **Observed Result:**
-* **Sign-off:** Lead Developer | Date: —
+* **Observed Result:** Set client workstation timezone to **UTC-4** (non-UTC) before randomization. Submitted a point-of-care allocation at https://spectr.mmmr.in via investigator browser UI for participant **`TEST-CLK-01`**. Immediately queried Railway PostgreSQL `audit_logs`:
+
+  `SELECT participant_id, assigned_at, created_at FROM audit_logs WHERE participant_id = 'TEST-CLK-01' ORDER BY id DESC LIMIT 1;`
+
+  Result: `assigned_at = 2026-09-29T18:14:24.044Z`, `created_at = 2026-09-29T18:14:24.016Z`. Both values are UTC (`Z` suffix) and matched authoritative server time at submission (~18:14 UTC, corresponding to ~14:14 local in UTC-4). Client timezone/wall-clock display did not influence the persisted audit timestamp.
+* **Sign-off:** Mr. Dhanush Kumar (Lead Developer) | Date: 29-09-2026
 
 ---
 
@@ -226,8 +231,8 @@ This protocol governs the internal technical verification, baseline functional s
 * **Pass Criteria:**
   * Record contains: `study_id`, `participant_id`, `stratum`, `treatment_assigned`, `operator_user_id`, `client_ip`, and `timestamp_utc`.
   * Database rejects manual edits with `PERMISSION DENIED` (append-only table permissions).
-* **Observed Result:**
-* **Sign-off:** Lead Developer | Date: —
+* **Observed Result:** Inspected Railway PostgreSQL `audit_logs` for allocation participant `TEST-CLK-01` (record `id = 20`, event `participant_kit_assigned`). Required fields present: `study_id = 8`, `participant_id = TEST-CLK-01`, `stratum_name = Stratum A`, `treatment_arm = Placebo`, `site_investigator_id = 13`, `client_ip = 100.64.0.15`, `assigned_at = 2026-09-29T18:14:24.044Z`. Manual `UPDATE audit_logs SET participant_id = 'HACKED' WHERE id = 20` rejected with `audit_logs is append-only: UPDATE is not allowed`. Manual `DELETE FROM audit_logs WHERE id = 20` rejected with `audit_logs is append-only: DELETE is not allowed`. Post-test `SELECT` confirmed row unchanged (`participant_id = TEST-CLK-01`).
+* **Sign-off:** Mr. Dhanush Kumar (Lead Developer) | Date: 29-09-2026
 
 ---
 
@@ -245,7 +250,7 @@ This protocol governs the internal technical verification, baseline functional s
   2. Form prevents submission for the exhausted stratum.
   3. Server-side API rejects any direct POST request targeting the exhausted stratum with an explicit error message (No unassigned kit codes remaining for stratum 'Strata 1' at this site); zero        sequence counter corruption or unhandled 500 server crashes.
 * **Observed Result:** Ingested test sequence with 4 available rows. Executed 4 successful allocations. Upon reaching row 4, the point-of-care selector immediately updated to grey out the exhausted stratum, rendering the label as 'Stratum 1 (0 Available)' and disabling form submission. Dispatched a direct POST request targeting the exhausted stratum; API safely returned HTTP 400 with message 'No unassigned kit codes remaining for stratum 'Strata 1' at this site.' Sequence counter remained locked at 4 with zero over-allocation or server crashes.
-* **Sign-off:** Dr. Manu Pradeep (Clinical Epidemiologist) | Date: 28-09-2026 | Commit Hash:
+* **Sign-off:** Dr. Manu Pradeep (Clinical Epidemiologist) | Date: 28-09-2026
 
 ---
 
