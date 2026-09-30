@@ -33,7 +33,7 @@ This protocol governs the internal technical verification, baseline functional s
 | **TC-CNC-01** | Gate 2: Concealment | Zero sequence pre-fetching or client-side DOM/state leakage | Dhanush Kumar | 29-09-2026 | Pass |
 | **TC-UNB-01** | Gate 2: Regulatory | Audited emergency single-participant code-break (ICH-GCP 5.5.3 g) | Manu Pradeep | 30-09-2026 | Pass |
 | **TC-SEC-01** | Gate 2: Multicenter | Site-specific queue isolation and cross-center access denial | Dhanush Kumar | 29-09-2026 | Pass |
-| **TC-VAL-01** | Gate 2: Data Integrity | Duplicate Participant ID entry prevention | — | — | Pending |
+| **TC-VAL-01** | Gate 2: Data Integrity | Duplicate Participant ID entry prevention | Manu Pradeep | 30-09-2026 | Pass |
 | **TC-CLK-01** | Gate 2: Data Integrity | Server-side UTC enforcement against client clock tampering | Dhanush Kumar | 29-09-2026 | Pass |
 | **TC-AUD-01** | Gate 2: Regulatory | Audit trail immutability and append-only database permissions | Dhanush Kumar | 29-09-2026 | Pass |
 | **TC-BND-01** | Gate 3: Boundary | Graceful handling of stratum capacity exhaustion | Manu Pradeep | 28-09-2026 | Pass |
@@ -197,7 +197,7 @@ This protocol governs the internal technical verification, baseline functional s
   2. Attempt a second allocation using the identical ID `AMP-101` in any stratum.
 * **Pass Criteria:** System blocks submission with error `Participant ID already randomized`; sequence queue remains unconsumed.
 * **Observed Result:**
-* **Sign-off:** Clinical Epidemiologist | Date: —
+* **Sign-off:** Dr. Manu Pradeep (Clinical Epidemiologist) | Date: 30-09-2026
 
 ---
 
