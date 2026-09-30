@@ -196,7 +196,7 @@ This protocol governs the internal technical verification, baseline functional s
   1. Complete allocation for Participant ID `AMP-101` in stratum `Amrita Hospital / No Epidural`.
   2. Attempt a second allocation using the identical ID `AMP-101` in any stratum.
 * **Pass Criteria:** System blocks submission with error `Participant ID already randomized`; sequence queue remains unconsumed.
-* **Observed Result:** Attempted a second allocation using duplicate screening ID 'AMP-101' across strata. Submission blocked at API validation layer; UI displayed clinical error modal: 'Participant ID already randomized'. Sequence pointer remained unconsumed at current row; no new database record inserted.
+* **Observed Result:** Attempted allocation using duplicate screening ID 'AMP-101' in an active study stratum. System intercepted the submission and blocked new allocation creation. UI rendered clinical warning modal: 'Participant AMP-101 was already assigned kit code Group A on 30/9/2026, 2:25:59 pm.' Confirmed via database query that active stratum sequence pointer was unchanged, zero new sequence rows were consumed, and no duplicate records were inserted.
 * **Sign-off:** Dr. Manu Pradeep (Clinical Epidemiologist) | Date: 30-09-2026
 
 ---
@@ -333,7 +333,7 @@ This protocol governs the internal technical verification, baseline functional s
 
 | Defect ID | Associated Test Case | Description / Error Trace | Severity | Status | Commit Fix Hash |
 |---|---|---|---|---|---|
-| — | — | — | — | — | — |
+| DEF-01 | TC-VAL-01 | Entering duplicate Screening ID re-rendered historical assignment modal without an explicit duplicate warning banner. Patched to hard-block allocation and display explicit duplicate alert with historical timestamp. | Medium | Closed | e544dd |
 
 ---
 
