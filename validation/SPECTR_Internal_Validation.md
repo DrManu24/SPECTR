@@ -41,7 +41,7 @@ This protocol governs the internal technical verification, baseline functional s
 | **TC-REC-01** | Gate 3: Resilience | Database snapshot restoration and data integrity (ICH-GCP 5.5.3 f) | — | — | Pending |
 | **TC-SES-01** | Gate 3: Session Security | Mid-form authentication expiration and safe failure | — | — | Pending |
 | **TC-ACC-01** | Gate 3: Access Control | Immediate lockout upon account suspension/revocation | — | — | Pending |
-| **TC-NOT-01** | Gate 3: Notifications | Automated email alerts and header verification | — | — | Pending |
+| **TC-NOT-01** | Gate 3: Notifications | Automated email alerts and header verification | Manu Pradeep | 30-09-2026 | Pass |
 
 ---
 
@@ -322,8 +322,8 @@ This protocol governs the internal technical verification, baseline functional s
   * Site email received with allocation confirmation.
   * Coordinating center email received with audit record.
   * Delivery completed within 30 seconds; SPF/DKIM headers pass verification.
-* **Observed Result:**
-* **Sign-off:** Clinical Epidemiologist | Date: —
+* **Observed Result:** Executed allocation for screening ID 'AMP-102'. Central Coordinating Office audit alert email received at 11 seconds. Message headers verified with valid SPF and DKIM pass statuses; email body accurately lists screening ID, stratum, and server UTC timestamp.
+* **Sign-off:** Dr. Manu Pradeep (Clinical Epidemiologist) | Date: 30-09-2026
 
 ---
 
