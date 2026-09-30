@@ -37,7 +37,7 @@ This protocol governs the internal technical verification, baseline functional s
 | **TC-CLK-01** | Gate 2: Data Integrity | Server-side UTC enforcement against client clock tampering | Dhanush Kumar | 29-09-2026 | Pass |
 | **TC-AUD-01** | Gate 2: Regulatory | Audit trail immutability and append-only database permissions | Dhanush Kumar | 29-09-2026 | Pass |
 | **TC-BND-01** | Gate 3: Boundary | Graceful handling of stratum capacity exhaustion | Manu Pradeep | 28-09-2026 | Pass |
-| **TC-ING-01** | Gate 3: Ingestion | Schema and syntax validation of malformed sequence files | — | — | Pending |
+| **TC-ING-01** | Gate 3: Ingestion | Schema and syntax validation of malformed sequence files | Manu Pradeep | 30-09-2026 | Pass |
 | **TC-REC-01** | Gate 3: Resilience | Database snapshot restoration and data integrity (ICH-GCP 5.5.3 f) | — | — | Pending |
 | **TC-SES-01** | Gate 3: Session Security | Mid-form authentication expiration and safe failure | — | — | Pending |
 | **TC-ACC-01** | Gate 3: Access Control | Immediate lockout upon account suspension/revocation | — | — | Pending |
@@ -196,7 +196,7 @@ This protocol governs the internal technical verification, baseline functional s
   1. Complete allocation for Participant ID `AMP-101` in stratum `Amrita Hospital / No Epidural`.
   2. Attempt a second allocation using the identical ID `AMP-101` in any stratum.
 * **Pass Criteria:** System blocks submission with error `Participant ID already randomized`; sequence queue remains unconsumed.
-* **Observed Result:**
+* **Observed Result:** 
 * **Sign-off:** Dr. Manu Pradeep (Clinical Epidemiologist) | Date: 30-09-2026
 
 ---
@@ -260,8 +260,8 @@ This protocol governs the internal technical verification, baseline functional s
   1. Upload CSV missing the required `treatment_arm` column.
   2. Upload CSV containing non-integer sequence IDs or mismatched column counts.
 * **Pass Criteria:** Ingestion rejected; user shown exact row/column syntax failure; complete transaction rollback.
-* **Observed Result:**
-* **Sign-off:** Clinical Epidemiologist | Date: —
+* **Observed Result:** Tested upload with missing 'treatment_arm' column header; parser rejected file at row 0 with error 'Missing required column: treatment_arm'. Tested second file with non-integer sequence IDs; ingestion rejected and full transaction rolled back. Zero partial rows committed to database.
+* **Sign-off:** Dr. Manu Pradeep (Clinical Epidemiologist) | Date: 30-09-2026
 
 ---
 
