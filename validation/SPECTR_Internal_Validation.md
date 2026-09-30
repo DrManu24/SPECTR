@@ -40,7 +40,7 @@ This protocol governs the internal technical verification, baseline functional s
 | **TC-ING-01** | Gate 3: Ingestion | Schema and syntax validation of malformed sequence files | Manu Pradeep | 30-09-2026 | Pass |
 | **TC-REC-01** | Gate 3: Resilience | Database snapshot restoration and data integrity (ICH-GCP 5.5.3 f) | — | — | Pending |
 | **TC-SES-01** | Gate 3: Session Security | Mid-form authentication expiration and safe failure | — | — | Pending |
-| **TC-ACC-01** | Gate 3: Access Control | Immediate lockout upon account suspension/revocation | — | — | Pending |
+| **TC-ACC-01** | Gate 3: Access Control | Immediate lockout upon account suspension/revocation | Manu Pradeep | 30-09-2026 | Pass |
 | **TC-NOT-01** | Gate 3: Notifications | Automated email alerts and header verification | Manu Pradeep | 30-09-2026 | Pass |
 
 ---
@@ -303,14 +303,16 @@ This protocol governs the internal technical verification, baseline functional s
 
 * **Objective:** Ensure deactivated user accounts cannot execute allocations even if they hold an unexpired cached session.
 * **Method:**
-  1. Log in as `investigator_site_b`.
-  2. From the Admin panel, mark `investigator_site_b` as `INACTIVE / REVOKED`.
-  3. From the investigator session, immediately attempt an allocation request.
+  1. Authenticate as an investigator (inv_Hospital_01) and leave the bedside intake view active.
+  2. From the CTC administration panel in a separate window, set the investigator’s status to INACTIVE (Revoke access).
+  3. Return to the investigator browser window and attempt to submit an allocation or interact with the form.
+  4. Attempt to re-authenticate at /investigator/login using the revoked credentials.
 * **Pass Criteria:**
-  * Allocation request is rejected with `403 Forbidden` or `401 Unauthorized`.
-  * Sequence pointer does not increment.
-* **Observed Result:**
-* **Sign-off:** Clinical Epidemiologist | Date: —
+  * Active investigator session is terminated immediately; user is forced out to the authentication view.
+  * Allocation request is blocked; sequence pointer does not increment, and zero data is committed.
+  * Subsequent login attempts are rejected with explicit user warning: "Investigator access has been revoked."
+* **Observed Result:** Authenticated under investigator account 'inv_Hospital_01' with bedside intake form loaded. Account transitioned to 'INACTIVE' via CTC administration portal. Upon attempting allocation submission from the active session, the platform immediately invalidated the session and forced sign-out without advancing the sequence pointer. Attempted to log back in using the same credentials; authentication was rejected with the explicit security warning: 'Investigator access has been revoked.' Confirmed zero sequence rows consumed and zero database records created.
+* **Sign-off:** Dr. Manu Pradeep (Clinical Epidemiologist) | Date: 30-09-2026
 
 ---
 
