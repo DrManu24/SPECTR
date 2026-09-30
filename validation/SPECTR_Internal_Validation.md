@@ -31,7 +31,7 @@ This protocol governs the internal technical verification, baseline functional s
 | **TC-CON-01** | Gate 2: Concurrency | Row-locking under simultaneous bedside allocations | Dhanush Kumar & Manu Pradeep | 29-09-2026 | Pass |
 | **TC-IDM-01** | Gate 2: Resilience | Idempotency and double-click / network drop handling | Dhanush Kumar | 29-09-2026 | Pass |
 | **TC-CNC-01** | Gate 2: Concealment | Zero sequence pre-fetching or client-side DOM/state leakage | Dhanush Kumar | 29-09-2026 | Pass |
-| **TC-UNB-01** | Gate 2: Regulatory | Audited emergency single-participant code-break (ICH-GCP 5.5.3 g) | — | — | Pending |
+| **TC-UNB-01** | Gate 2: Regulatory | Audited emergency single-participant code-break (ICH-GCP 5.5.3 g) | Manu Pradeep | 30-09-2026 | Pass |
 | **TC-SEC-01** | Gate 2: Multicenter | Site-specific queue isolation and cross-center access denial | Dhanush Kumar | 29-09-2026 | Pass |
 | **TC-VAL-01** | Gate 2: Data Integrity | Duplicate Participant ID entry prevention | — | — | Pending |
 | **TC-CLK-01** | Gate 2: Data Integrity | Server-side UTC enforcement against client clock tampering | Dhanush Kumar | 29-09-2026 | Pass |
@@ -173,7 +173,7 @@ This protocol governs the internal technical verification, baseline functional s
   * An immutable entry is appended to the audit log recording operator user ID, client IP, UTC timestamp, unblinded participant ID, and the exact clinical rationale entered.
   * Automated security email notification is dispatched immediately to the Central Coordinating Office.
 * **Observed Result:**
-* **Sign-off:** Clinical Epidemiologist | Date: —
+* **Sign-off:** Dr. Manu Pradeep (Clinical Epidemiologist) | Date: 30-09-2026
 
 ---
 
