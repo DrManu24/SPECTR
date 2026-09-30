@@ -24,12 +24,11 @@ This protocol governs the internal technical verification, baseline functional s
 
 | Test Case ID | Gate / Category | Objective | Tester | Date | Status |
 |---|---|---|---|---|---|
-| **TC-SMK-01** | Gate 1: Sanity | User authentication, dashboard initialization and site display |Manu 
-Pradeep & Dhanush Kumar | 29-09-2026 | Pass |
+| **TC-SMK-01** | Gate 1: Sanity | User authentication, dashboard initialization and site display | Dhanush Kumar | 29-09-2026 | Pass |
 | **TC-SMK-02** | Gate 1: Sanity | Standard single-file sequence ingestion and table mapping | Manu Pradeep | 28-09-2026 | Pass |
 | **TC-SMK-03** | Gate 1: Sanity | End-to-end baseline allocation | Manu Pradeep | 28-09-2026 | Pass |
 | **TC-SMK-04** | Gate 1: Sanity | On-demand allocation log and audit CSV export | Manu Pradeep | 28-09-2026 | Pass |
-| **TC-CON-01** | Gate 2: Concurrency | Row-locking under simultaneous bedside allocations | Dhanush Kumar | 29-09-2026 | Pass |
+| **TC-CON-01** | Gate 2: Concurrency | Row-locking under simultaneous bedside allocations | Dhanush Kumar & Manu Pradeep | 29-09-2026 | Pass |
 | **TC-IDM-01** | Gate 2: Resilience | Idempotency and double-click / network drop handling | Dhanush Kumar | 29-09-2026 | Pass |
 | **TC-CNC-01** | Gate 2: Concealment | Zero sequence pre-fetching or client-side DOM/state leakage | Dhanush Kumar | 29-09-2026 | Pass |
 | **TC-UNB-01** | Gate 2: Regulatory | Audited emergency single-participant code-break (ICH-GCP 5.5.3 g) | — | — | Pending |
@@ -127,7 +126,7 @@ Pradeep & Dhanush Kumar | 29-09-2026 | Pass |
   * `TEST-002` waits for transaction lock release and claims sequence row 2.
   * Zero duplicate row assignments; zero unhandled database deadlocks.
 * **Observed Result:** Executed parallel `POST /investigator/assign-kit` requests via `validation/scripts/tc-con-01-concurrency.sh` against https://spectr.mmmr.in using investigator account `AEWSSY` and stratum `Stratum A` (id=24). Dispatched simultaneous allocations for `TEST-001` and `TEST-002` with distinct `Idempotency-Key` headers. Both requests returned HTTP 200 with `assignment_outcome: created`. `TEST-002` claimed sequence row 1 (record id 21185, kit `TRL-4821`); `TEST-001` claimed sequence row 2 (record id 21186, kit `TRL-7390`). Zero duplicate sequence assignments; zero database deadlocks observed.
-* **Sign-off:** Mr. Dhanush Kumar (Lead Developer) | Date: 29-09-2026; Dr. Manu Pradeep (Clinical Epidemiologist) | Date: —
+* **Sign-off:** Mr. Dhanush Kumar (Lead Developer) | Date: 29-09-2026; Dr. Manu Pradeep (Clinical Epidemiologist) | Date: 29-09-2026
 
 ---
 
