@@ -39,7 +39,7 @@ This protocol governs the internal technical verification, baseline functional s
 | **TC-BND-01** | Gate 3: Boundary | Graceful handling of stratum capacity exhaustion | Manu Pradeep | 28-09-2026 | Pass |
 | **TC-ING-01** | Gate 3: Ingestion | Schema and syntax validation of malformed sequence files | Manu Pradeep | 30-09-2026 | Pass |
 | **TC-REC-01** | Gate 3: Resilience | Database snapshot restoration and data integrity (ICH-GCP 5.5.3 f) | — | — | Pending |
-| **TC-SES-01** | Gate 3: Session Security | Mid-form authentication expiration and safe failure | — | — | Pending |
+| **TC-SES-01** | Gate 3: Session Security | Mid-form authentication expiration and safe failure | Manu Pradeep | 30-09-2026 | Pass |
 | **TC-ACC-01** | Gate 3: Access Control | Immediate lockout upon account suspension/revocation | Manu Pradeep | 30-09-2026 | Pass |
 | **TC-NOT-01** | Gate 3: Notifications | Automated email alerts and header verification | Manu Pradeep | 30-09-2026 | Pass |
 
@@ -294,8 +294,8 @@ This protocol governs the internal technical verification, baseline functional s
   * System returns `401 Unauthorized`.
   * No sequence row is allocated, revealed, or consumed in the database.
   * User is redirected to login without state corruption.
-* **Observed Result:**
-* **Sign-off:** Clinical Epidemiologist | Date: —
+* **Observed Result:** Populated complete patient screening details on the bedside intake form. Cleared the active authenticated session cookie via browser developer tools prior to form submission to simulate mid-form session timeout. Clicked 'Randomize'; system safely intercepted the unauthenticated request, returned HTTP 401 Unauthorized, and displayed the explicit user modal: 'Your session expired. Please sign in again.' Confirmed via backend log that the sequence pointer remained unchanged, zero rows were consumed, and no orphan allocation records were created.
+* **Sign-off:** Dr. Manu Pradeep (Clinical Epidemiologist) | Date: 30-09-2026
 
 ---
 
