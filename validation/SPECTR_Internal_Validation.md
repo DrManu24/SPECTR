@@ -172,7 +172,7 @@ This protocol governs the internal technical verification, baseline functional s
   * All other past and future sequence rows in the stratum remain fully masked.
   * An immutable entry is appended to the audit log recording operator user ID, client IP, UTC timestamp, unblinded participant ID, and the exact clinical rationale entered.
   * Automated security email notification is dispatched immediately to the Central Coordinating Office.
-* **Observed Result:**
+* **Observed Result:** Navigated to Emergency Code-Break module as CTC for participant 'AMP-001'. Entered required clinical rationale ('SUSAR - Grade 4 anaphylactoid reaction requiring unblinding'). Treatment assignment unmasked strictly for 'AMP-001'. Confirmed all other sequence rows and participant allocations remain fully masked. Audit log entry recorded operator ID, client IP, UTC timestamp, and rationale. Automated security notification email received by trial coordinator.
 * **Sign-off:** Dr. Manu Pradeep (Clinical Epidemiologist) | Date: 30-09-2026
 
 ---
@@ -196,7 +196,7 @@ This protocol governs the internal technical verification, baseline functional s
   1. Complete allocation for Participant ID `AMP-101` in stratum `Amrita Hospital / No Epidural`.
   2. Attempt a second allocation using the identical ID `AMP-101` in any stratum.
 * **Pass Criteria:** System blocks submission with error `Participant ID already randomized`; sequence queue remains unconsumed.
-* **Observed Result:** 
+* **Observed Result:** Attempted a second allocation using duplicate screening ID 'AMP-101' across strata. Submission blocked at API validation layer; UI displayed clinical error modal: 'Participant ID already randomized'. Sequence pointer remained unconsumed at current row; no new database record inserted.
 * **Sign-off:** Dr. Manu Pradeep (Clinical Epidemiologist) | Date: 30-09-2026
 
 ---
