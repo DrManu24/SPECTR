@@ -3,6 +3,7 @@ import { INVESTIGATOR_LABEL_PLURAL } from '../labels'
 import {
   BLINDING_TYPE_OPTIONS,
   DEFAULT_BLINDING_TYPE,
+  investigatorIsBlinded,
 } from '../utils/blindingType'
 import {
   buildStudyDetailsPayload,
@@ -37,6 +38,8 @@ function StudyDetailsForm({
   const [inclusions, setInclusions] = useState(initialCriteria.inclusions)
   const [exclusions, setExclusions] = useState(initialCriteria.exclusions)
 
+  const showsEmergencyUnblinding = investigatorIsBlinded(blindingType)
+
   function handleCriteriaChange(type, index, value) {
     const setter = type === 'inclusions' ? setInclusions : setExclusions
     setter((prev) => prev.map((item, i) => (i === index ? value : item)))
@@ -60,7 +63,7 @@ function StudyDetailsForm({
         protocolCode,
         description,
         blindingType,
-        emergencyUnblinding,
+        emergencyUnblinding: showsEmergencyUnblinding ? emergencyUnblinding : true,
         inclusions,
         exclusions,
       })
@@ -125,20 +128,22 @@ function StudyDetailsForm({
           />
         </div>
 
-        <div className="field field-full field-checkbox">
-          <label htmlFor="unblinding-allowed" className="checkbox-label">
-            <input
-              id="unblinding-allowed"
-              type="checkbox"
-              checked={emergencyUnblinding}
-              onChange={(e) => setEmergencyUnblinding(e.target.checked)}
-            />
-            <span>Emergency Unblinding Allowed</span>
-          </label>
-          <span className="field-hint">
-            Permits {INVESTIGATOR_LABEL_PLURAL.toLowerCase()} to perform code-breaks in emergency situations.
-          </span>
-        </div>
+        {showsEmergencyUnblinding && (
+          <div className="field field-full field-checkbox">
+            <label htmlFor="unblinding-allowed" className="checkbox-label">
+              <input
+                id="unblinding-allowed"
+                type="checkbox"
+                checked={emergencyUnblinding}
+                onChange={(e) => setEmergencyUnblinding(e.target.checked)}
+              />
+              <span>Emergency Unblinding Allowed</span>
+            </label>
+            <span className="field-hint">
+              Permits {INVESTIGATOR_LABEL_PLURAL.toLowerCase()} to perform code-breaks in emergency situations.
+            </span>
+          </div>
+        )}
       </div>
 
       <div className="criteria-section">
