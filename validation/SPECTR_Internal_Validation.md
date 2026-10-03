@@ -38,7 +38,7 @@ This protocol governs the internal technical verification, baseline functional s
 | **TC-AUD-01** | Gate 2: Regulatory | Audit trail immutability and append-only database permissions | Dhanush Kumar | 29-09-2026 | Pass |
 | **TC-BND-01** | Gate 3: Boundary | Graceful handling of stratum capacity exhaustion | Manu Pradeep | 28-09-2026 | Pass |
 | **TC-ING-01** | Gate 3: Ingestion | Schema and syntax validation of malformed sequence files | Manu Pradeep | 30-09-2026 | Pass |
-| **TC-REC-01** | Gate 3: Resilience | Database snapshot restoration and data integrity (ICH-GCP 5.5.3 f) | — | — | Pending |
+| **TC-REC-01** | Gate 3: Resilience | Database snapshot restoration and data integrity (ICH-GCP 5.5.3 f) | Dhanush Kumar | 03-10-2026 | Pass |
 | **TC-SES-01** | Gate 3: Session Security | Mid-form authentication expiration and safe failure | Manu Pradeep | 30-09-2026 | Pass |
 | **TC-ACC-01** | Gate 3: Access Control | Immediate lockout upon account suspension/revocation | Manu Pradeep | 30-09-2026 | Pass |
 | **TC-NOT-01** | Gate 3: Notifications | Automated email alerts and header verification | Manu Pradeep | 30-09-2026 | Pass |
@@ -278,8 +278,8 @@ This protocol governs the internal technical verification, baseline functional s
   * Sequence pointer for the test stratum is unchanged; no duplicate or skipped sequence indices.
   * All historical audit log entries remain present and append-only.
   * Application resumes normal allocation operations without data corruption errors.
-* **Observed Result:**
-* **Sign-off:** Lead Developer | Date: —
+* **Observed Result:** Configured automated **hourly PostgreSQL backups** on Railway (cron). Performed disaster-recovery validation by removing the prior PostgreSQL service, provisioning a new PostgreSQL instance, and restoring from the latest platform-managed backup snapshot. Reattached SPECTR to the restored database and verified production data integrity: randomization records, stratum sequence state, and historical `audit_logs` entries were all present with no observed row loss or corruption. Application reconnected successfully and resumed normal operation post-restore.
+* **Sign-off:** Mr. Dhanush Kumar (Lead Developer) | Date: 03-10-2026
 
 ---
 
