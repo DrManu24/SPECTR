@@ -7,6 +7,7 @@ from datetime import datetime, timezone
 from email.message import EmailMessage
 
 from ..config import (
+    email_brand_icon_url,
     FRONTEND_URL,
     IS_PRODUCTION,
     RESEND_API_KEY,
@@ -24,6 +25,29 @@ from ..config import (
 )
 
 logger = logging.getLogger(__name__)
+
+
+def _html_escape(text: str) -> str:
+    return (
+        text.replace("&", "&amp;")
+        .replace("<", "&lt;")
+        .replace(">", "&gt;")
+        .replace('"', "&quot;")
+    )
+
+
+def _branded_email_html(*, inner_html: str) -> str:
+    logo_url = email_brand_icon_url()
+    return f"""<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="utf-8"></head>
+<body style="font-family: system-ui, -apple-system, sans-serif; color: #1a1a1a; line-height: 1.55; max-width: 560px; margin: 0; padding: 16px;">
+  <p style="margin: 0 0 20px;">
+    <img src="{_html_escape(logo_url)}" alt="SPECTR" width="44" height="59" style="display: block;" />
+  </p>
+  {inner_html}
+</body>
+</html>"""
 
 
 def _format_event_timestamp(event_at: datetime) -> str:
@@ -53,6 +77,27 @@ def _investigator_section(
     )
 
 
+def _investigator_section_html(
+    *,
+    investigator_username: str,
+    investigator_email: str,
+    investigator_name: str | None,
+    event_at: datetime,
+) -> str:
+    name_item = (
+        f"<li>Name: {_html_escape(investigator_name.strip())}</li>"
+        if investigator_name and investigator_name.strip()
+        else ""
+    )
+    return f"""<p><strong>Site Investigator</strong></p>
+  <ul>
+    <li>Username: {_html_escape(investigator_username)}</li>
+    <li>Email: {_html_escape(investigator_email)}</li>
+    {name_item}
+    <li>Date: {_html_escape(_format_event_timestamp(event_at))}</li>
+  </ul>"""
+
+
 def _zeptomail_auth_header() -> str:
     key = ZEPTOMAIL_API_KEY.strip()
     prefix = "Zoho-enczapikey"
@@ -61,18 +106,22 @@ def _zeptomail_auth_header() -> str:
     return f"{prefix} {key}"
 
 
-def _send_via_zeptomail(to: str, subject: str, body: str) -> None:
+def _send_via_zeptomail(to: str, subject: str, body: str, html_body: str | None = None) -> None:
     """Send email using ZeptoMail's HTTP API (avoids outbound SMTP port blocks)."""
     from_payload: dict[str, str] = {"address": email_from_address()}
     if SMTP_FROM_NAME:
         from_payload["name"] = SMTP_FROM_NAME
 
-    payload = json.dumps({
+    message: dict = {
         "from": from_payload,
         "to": [{"email_address": {"address": to}}],
         "subject": subject,
         "textbody": body,
-    }).encode()
+    }
+    if html_body:
+        message["htmlbody"] = html_body
+
+    payload = json.dumps(message).encode()
 
     req = urllib.request.Request(
         zeptomail_api_url(),
@@ -94,14 +143,18 @@ def _send_via_zeptomail(to: str, subject: str, body: str) -> None:
         raise RuntimeError(f"ZeptoMail API error {exc.code}: {body_text}") from exc
 
 
-def _send_via_resend(to: str, subject: str, body: str) -> None:
+def _send_via_resend(to: str, subject: str, body: str, html_body: str | None = None) -> None:
     """Send email using Resend's HTTP API (avoids outbound SMTP port blocks)."""
-    payload = json.dumps({
+    message: dict = {
         "from": email_from_header(),
         "to": [to],
         "subject": subject,
         "text": body,
-    }).encode()
+    }
+    if html_body:
+        message["html"] = html_body
+
+    payload = json.dumps(message).encode()
 
     req = urllib.request.Request(
         "https://api.resend.com/emails",
@@ -123,13 +176,15 @@ def _send_via_resend(to: str, subject: str, body: str) -> None:
         raise RuntimeError(f"Resend API error {exc.code}: {body_text}") from exc
 
 
-def _send_via_smtp(to: str, subject: str, body: str) -> None:
+def _send_via_smtp(to: str, subject: str, body: str, html_body: str | None = None) -> None:
     """Send email via SMTP (port 465 = SSL, port 587 = STARTTLS)."""
     message = EmailMessage()
     message["From"] = email_from_header()
     message["To"] = to
     message["Subject"] = subject
     message.set_content(body)
+    if html_body:
+        message.add_alternative(html_body, subtype="html")
 
     use_ssl = SMTP_PORT == 465
     if use_ssl:
@@ -146,7 +201,7 @@ def _send_via_smtp(to: str, subject: str, body: str) -> None:
             server.send_message(message)
 
 
-def send_email(to: str, subject: str, body: str) -> None:
+def send_email(to: str, subject: str, body: str, html_body: str | None = None) -> None:
     if not email_is_configured():
         if IS_PRODUCTION:
             raise RuntimeError("Email service is not configured.")
@@ -161,11 +216,11 @@ def send_email(to: str, subject: str, body: str) -> None:
     try:
         if ZEPTOMAIL_API_KEY:
             # Preferred on Railway — HTTP API bypasses SMTP port restrictions.
-            _send_via_zeptomail(to, subject, body)
+            _send_via_zeptomail(to, subject, body, html_body)
         elif RESEND_API_KEY:
-            _send_via_resend(to, subject, body)
+            _send_via_resend(to, subject, body, html_body)
         else:
-            _send_via_smtp(to, subject, body)
+            _send_via_smtp(to, subject, body, html_body)
     except Exception as exc:
         logger.error("Failed to send email to %s: %s", to, exc)
         raise RuntimeError(f"Failed to send email: {exc}") from exc
@@ -212,7 +267,29 @@ If you did not expect this email, please contact your 'Central Trial Coordinator
 — SPECTR
 """
 
-    send_email(to_email, subject, body)
+    html_body = _branded_email_html(
+        inner_html=f"""
+  <p>Hello {_html_escape(greeting)},</p>
+  <p>{_html_escape(intro)}</p>
+  <p>
+    <strong>Study:</strong> {_html_escape(study_title)}<br />
+    <strong>Protocol:</strong> {_html_escape(protocol_code.strip())}
+  </p>
+  <p><strong>Your login credentials:</strong></p>
+  <ul>
+    <li>Username: {_html_escape(username)}</li>
+    <li>Password: {_html_escape(temp_password)}</li>
+  </ul>
+  <p><a href="{_html_escape(login_url)}">Sign in to SPECTR</a></p>
+  <p style="color: #555; font-size: 14px;">
+    You can change your password after logging in.<br />
+    If you did not expect this email, please contact your Central Trial Coordinator (CTC).
+  </p>
+  <p>— SPECTR</p>
+"""
+    )
+
+    send_email(to_email, subject, body, html_body)
 
 
 def send_organizer_credentials(
@@ -247,7 +324,25 @@ If you did not request this, please contact your system administrator.
 — SPECTR
 """
 
-    send_email(to_email, subject, body)
+    html_body = _branded_email_html(
+        inner_html=f"""
+  <p>Hello,</p>
+  <p>{_html_escape(intro)}</p>
+  <p><strong>Your login credentials:</strong></p>
+  <ul>
+    <li>Email: {_html_escape(to_email)}</li>
+    <li>Password: {_html_escape(temp_password)}</li>
+  </ul>
+  <p><a href="{_html_escape(login_url)}">Sign in to SPECTR</a></p>
+  <p style="color: #555; font-size: 14px;">
+    You can change your password after logging in.<br />
+    If you did not request this, please contact your system administrator.
+  </p>
+  <p>— SPECTR</p>
+"""
+    )
+
+    send_email(to_email, subject, body, html_body)
 
 
 def send_participant_allocation_notification(
@@ -299,7 +394,46 @@ You are receiving this message because allocation alerts are enabled for this st
 — SPECTR
 """
 
-    send_email(to_email, subject, body)
+    investigator_html = _investigator_section_html(
+        investigator_username=investigator_username,
+        investigator_email=investigator_email,
+        investigator_name=investigator_name,
+        event_at=assigned_at,
+    )
+    site_item = (
+        f"<li>Site: {_html_escape(site_name.strip())}</li>"
+        if site_name and site_name.strip()
+        else ""
+    )
+    stratum_item = (
+        f"<li>Stratum: {_html_escape(stratum_name.strip())}</li>"
+        if stratum_name and stratum_name.strip()
+        else ""
+    )
+    html_body = _branded_email_html(
+        inner_html=f"""
+  <p>Hello,</p>
+  <p>This is to confirm that a participant has been allocated in your study.</p>
+  <p>
+    <strong>Study:</strong> {_html_escape(study_title)}<br />
+    <strong>Protocol:</strong> {_html_escape(protocol_code.strip())}
+  </p>
+  {investigator_html}
+  <p><strong>Allocation</strong></p>
+  <ul>
+    <li>Participant ID: {_html_escape(patient_id)}</li>
+    <li>Kit Code: {_html_escape(kit_code)}</li>
+    {site_item}
+    {stratum_item}
+  </ul>
+  <p style="color: #555; font-size: 14px;">
+    You are receiving this message because allocation alerts are enabled for this study.
+  </p>
+  <p>— SPECTR</p>
+"""
+    )
+
+    send_email(to_email, subject, body, html_body)
 
 
 def send_unblind_notification(
@@ -345,4 +479,35 @@ This event has been recorded in the audit log.
 — SPECTR
 """
 
-    send_email(to_email, subject, body)
+    investigator_html = _investigator_section_html(
+        investigator_username=investigator_username,
+        investigator_email=investigator_email,
+        investigator_name=investigator_name,
+        event_at=unblinded_at,
+    )
+    reason_html = _html_escape(unblind_reason.strip()).replace("\n", "<br />\n")
+    html_body = _branded_email_html(
+        inner_html=f"""
+  <p>Hello,</p>
+  <p>A Site Investigator has performed an emergency unblinding on a study assignment.</p>
+  <p>
+    <strong>Study:</strong> {_html_escape(study_title)}<br />
+    <strong>Protocol:</strong> {_html_escape(protocol_code.strip())}
+  </p>
+  {investigator_html}
+  <p><strong>Assignment</strong></p>
+  <ul>
+    <li>Patient ID: {_html_escape(patient_id)}</li>
+    <li>Kit Code: {_html_escape(kit_code)}</li>
+    <li>Treatment Arm: {_html_escape(treatment_name)}</li>
+  </ul>
+  <p><strong>Clinical Rationale</strong></p>
+  <p>{reason_html}</p>
+  <p style="color: #555; font-size: 14px;">
+    This event has been recorded in the audit log.
+  </p>
+  <p>— SPECTR</p>
+"""
+    )
+
+    send_email(to_email, subject, body, html_body)

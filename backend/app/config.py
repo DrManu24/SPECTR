@@ -55,6 +55,17 @@ SETUP_TOKEN_HEADER = "X-Setup-Token"
 
 FRONTEND_URL = os.environ.get("FRONTEND_URL", "http://localhost:5173")
 
+# Optional absolute URL for the SPECTR logo in HTML emails (must be publicly reachable).
+# Defaults to {FRONTEND_URL}/spectr-logo.svg when unset.
+EMAIL_BRAND_ICON_URL = os.environ.get("EMAIL_BRAND_ICON_URL", "").strip()
+
+
+def email_brand_icon_url() -> str:
+    if EMAIL_BRAND_ICON_URL:
+        return EMAIL_BRAND_ICON_URL
+    return f"{FRONTEND_URL.rstrip('/')}/spectr-logo.svg"
+
+
 SMTP_HOST = os.environ.get("SMTP_HOST", "")
 SMTP_PORT = int(os.environ.get("SMTP_PORT", "587"))
 SMTP_USER = os.environ.get("SMTP_USER", "")
