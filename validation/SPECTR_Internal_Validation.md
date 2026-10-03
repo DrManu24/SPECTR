@@ -343,5 +343,5 @@ The sign-offs below certify that all alpha test cases across Gates 1, 2, and 3 h
 
 | Role | Name & Title | Final Verification Commit | Date (UTC) | Status |
 |---|---|---|---|---|
-| **Lead Developer** | — | Pending final validation cycle | — | Open |
+| **Lead Developer** | Mr. Dhanush Kumar, BCA, MCA (Technical Lead) | bd55c40 | 03-10-2026 | Closed |
 | **Clinical Epidemiologist** | Dr. Manu Pradeep, Clinical Lead | 9b7c56 | 03-10-2026 | Closed |
