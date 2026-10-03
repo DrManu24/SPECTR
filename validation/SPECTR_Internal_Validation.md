@@ -337,11 +337,11 @@ This protocol governs the internal technical verification, baseline functional s
 
 ---
 
-## 5. Alpha Validation Completion Sign-Off
+## 5. Internal Validation Completion Sign-Off
 
 The sign-offs below certify that all alpha test cases across Gates 1, 2, and 3 have been executed and verified against predefined pass criteria in the testbed environment.
 
 | Role | Name & Title | Final Verification Commit | Date (UTC) | Status |
 |---|---|---|---|---|
 | **Lead Developer** | — | Pending final validation cycle | — | Open |
-| **Clinical Epidemiologist** | — | Pending final validation cycle | — | Open |
+| **Clinical Epidemiologist** | Dr. Manu Pradeep, Clinical Lead | 9b7c56 | 03-10-2026 | Closed |
