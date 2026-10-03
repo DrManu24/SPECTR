@@ -80,9 +80,9 @@
 
 .app-header .site-name {
   display: inline-flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 3px;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.55rem;
   font-size: 17px;
   font-weight: 600;
   color: #1a1a2e;
@@ -90,11 +90,26 @@
   line-height: 1;
 }
 
+.app-header .site-name__logo {
+  width: auto;
+  height: 2.75rem;
+  flex-shrink: 0;
+  display: block;
+  object-fit: contain;
+}
+
+.app-header .site-name__text {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 3px;
+}
+
 .app-header .site-name__brand {
-  font-family: 'Barlow Semi Condensed', 'Segoe UI', sans-serif;
+  font-family: 'Merriweather', Georgia, serif;
   font-size: 1.75rem;
   font-weight: 600;
-  letter-spacing: 0.2em;
+  letter-spacing: 0.1em;
   color: #141428;
   text-transform: uppercase;
 }
@@ -1634,9 +1649,13 @@
     min-width: min(100%, 140px);
   }
 
+  .app-header .site-name__logo {
+    height: 2.35rem;
+  }
+
   .app-header .site-name__brand {
     font-size: 1.45rem;
-    letter-spacing: 0.14em;
+    letter-spacing: 0.08em;
   }
 
   .modal-overlay {

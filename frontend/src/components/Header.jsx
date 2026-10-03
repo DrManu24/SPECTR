@@ -29,10 +29,19 @@ function Header({ children }) {
     <header className="app-header">
       <div className="app-header__top">
         <NavLink to="/" className="site-name" onClick={closeMenu}>
-          <span className="site-name__brand">SPECTR</span>
-          <span className="site-name__tagline">
-            <span className="site-name__by">by</span>
-            <span className="site-name__org">MMMR</span>
+          <img
+            src="/spectr-logo.svg"
+            alt=""
+            className="site-name__logo"
+            width={44}
+            height={59}
+          />
+          <span className="site-name__text">
+            <span className="site-name__brand">SPECTR</span>
+            <span className="site-name__tagline">
+              <span className="site-name__by">by</span>
+              <span className="site-name__org">MMMR</span>
+            </span>
           </span>
         </NavLink>
         <button
