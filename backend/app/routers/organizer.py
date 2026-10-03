@@ -946,7 +946,7 @@ async def upload_randomization_csv(
     randomization_records, sites, and stratas for the study and sets its
     status to 'Generated'.
 
-    Required CSV columns: sequence_number, kit_code, site, strat, treatment_arm
+    Required CSV columns: sequence_number, kit_code, site, strata, treatment_arm
     """
     if not file.filename or not file.filename.lower().endswith(".csv"):
         raise HTTPException(status_code=400, detail="Please upload a .csv file.")

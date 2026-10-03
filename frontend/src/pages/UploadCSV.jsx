@@ -4,7 +4,7 @@ import { apiFetch, apiUpload, storeCsrfFromResponse, parseApiError } from '../ap
 import Header from '../components/Header'
 
 // --- Sample CSV content (embedded so no static file config needed) ---
-const SAMPLE_CSV_CONTENT = `sequence_number,kit_code,site,strat,treatment_arm
+const SAMPLE_CSV_CONTENT = `sequence_number,kit_code,site,strata,treatment_arm
 1,TRL-4821,Site 1 - University Hospital,Stratum A,Drug A
 2,TRL-7390,Site 1 - University Hospital,Stratum A,Placebo
 3,TRL-4821,Site 1 - University Hospital,Stratum A,Drug A
@@ -159,7 +159,7 @@ function UploadCSV() {
           <Link to={`/organizer/studies/${studyId}/home`} className="back-link">
             Back to Study
           </Link>
-          <h1>{study ? study.title : 'Loading...'} - Upload Randomization</h1>
+          <h1>{study ? study.title : 'Loading...'} - Upload Random Sequence</h1>
         </div>
 
         {!study ? (
@@ -192,7 +192,7 @@ function UploadCSV() {
                   <li>
                     Required columns (in this order):{' '}
                     <code>sequence_number</code>, <code>kit_code</code>, <code>site</code>,{' '}
-                    <code>strat</code>, <code>treatment_arm</code>
+                    <code>strata</code>, <code>treatment_arm</code>
                   </li>
                   <li>
                     <code>sequence_number</code> — unique positive integer for each randomization slot,
@@ -210,7 +210,7 @@ function UploadCSV() {
                     <strong>If single centre trial, use the site name globally.</strong>
                   </li>
                   <li>
-                    <code>strat</code> — stratum label for the participant classification (e.g. age group,
+                    <code>strata</code> — stratum label for the participant classification (e.g. age group,
                     disease stage, or other predefined subgroup). Within each site, the same stratum value
                     appears on many records according to your allocation plan — for example, Site 1 may
                     contain 15 records for Stratum A and 20 for Stratum B, and Site 2 would follow the

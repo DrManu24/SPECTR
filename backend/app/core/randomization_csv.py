@@ -5,7 +5,7 @@ Expected columns (case-insensitive, leading/trailing whitespace stripped):
     sequence_number  – positive integer, unique within the file
     kit_code         – blinded kit identifier for the treatment arm (e.g. "TRL-4821")
     site             – enrolling site name or code
-    strat            – stratum label (column may also be named ``strata``)
+    strata           – stratum label (column may also be named ``strat`` for legacy files)
     treatment_arm    – display name of the treatment arm (e.g. "Drug A")
 
 Arm validation is intentionally NOT performed here; the caller decides
@@ -22,7 +22,7 @@ from .csv_limits import ensure_csv_size
 
 
 REQUIRED_COLUMNS = {"sequence_number", "kit_code", "site", "treatment_arm"}
-STRAT_COLUMN_NAMES = ("strat", "strata")
+STRAT_COLUMN_NAMES = ("strata", "strat")
 
 
 class ParsedRow(TypedDict):
@@ -62,14 +62,14 @@ def parse_randomization_csv(content: bytes) -> list[ParsedRow]:
     if missing:
         raise ValueError(
             f"CSV is missing required column(s): {', '.join(sorted(missing))}. "
-            "Expected: sequence_number, kit_code, site, strat, treatment_arm."
+            "Expected: sequence_number, kit_code, site, strata, treatment_arm."
         )
 
     strat_column = _strat_column_name(normalised_headers)
     if strat_column is None:
         raise ValueError(
-            "CSV is missing required column 'strat' (or 'strata'). "
-            "Expected: sequence_number, kit_code, site, strat, treatment_arm."
+            "CSV is missing required column 'strata' (or legacy 'strat'). "
+            "Expected: sequence_number, kit_code, site, strata, treatment_arm."
         )
 
     rows: list[ParsedRow] = []

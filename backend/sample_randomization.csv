@@ -1,4 +1,4 @@
-sequence_number,kit_code,site,strat,treatment_arm
+sequence_number,kit_code,site,strata,treatment_arm
 1,TRL-4821,Site 1 - University Hospital,Stratum A,Drug A
 2,TRL-7390,Site 1 - University Hospital,Stratum A,Placebo
 3,TRL-4821,Site 1 - University Hospital,Stratum A,Drug A

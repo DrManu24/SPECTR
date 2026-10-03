@@ -298,7 +298,7 @@ SPECTR supports two paths to create a randomization sequence. They differ in how
 ### Path A: CSV upload (multicenter, stratified)
 
 1. CTC uploads a pre-computed CSV at `POST /organizer/studies/{id}/upload-randomization-csv`
-2. Required columns: `sequence_number`, `kit_code`, `site`, `strat`, `treatment_arm`
+2. Required columns: `sequence_number`, `kit_code`, `site`, `strata`, `treatment_arm` (legacy header `strat` also accepted)
 3. Backend creates `sites` and `stratas` from unique CSV values and links each record
 4. Study status → `Generated`
 5. Site investigators assign kits per stratum; first assignment → `Active`; last assignment → `Complete`
