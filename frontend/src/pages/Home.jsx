@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { apiFetch } from '../api'
+import { apiFetch, parseApiError } from '../api'
 import PasswordInput from '../components/PasswordInput'
 import Header from '../components/Header'
 import SpectrLanding from './SpectrLanding'
@@ -49,7 +49,7 @@ function Home() {
       })
       const data = await res.json()
       if (!res.ok) {
-        setFormError(data.detail || 'Setup failed.')
+        setFormError(parseApiError(data.detail) || 'Setup failed.')
         return
       }
       navigate('/admin/login', { replace: true })

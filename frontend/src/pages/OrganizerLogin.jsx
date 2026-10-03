@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { apiFetch, bootstrapCsrf, setCsrfToken } from '../api'
+import { apiFetch, bootstrapCsrf, parseApiError, setCsrfToken } from '../api'
 import PasswordInput from '../components/PasswordInput'
 import Header from '../components/Header'
 import TermsOfServiceModal from '../components/TermsOfServiceModal'
@@ -61,7 +61,11 @@ function OrganizerLogin() {
         }
       }
 
-      if (res.status === 403 && data.detail?.includes('Terms of service')) {
+      if (
+        res.status === 403 &&
+        typeof data.detail === 'string' &&
+        data.detail.includes('Terms of service')
+      ) {
         setShowTerms(true)
         setTermsAccepted(false)
         setError(null)
@@ -69,7 +73,7 @@ function OrganizerLogin() {
       }
 
       if (!res.ok) {
-        setError(data.detail || 'Login failed.')
+        setError(parseApiError(data.detail) || 'Login failed.')
         return
       }
 
@@ -107,7 +111,7 @@ function OrganizerLogin() {
       }
 
       if (!res.ok) {
-        setError(data.detail || 'Could not accept terms.')
+        setError(parseApiError(data.detail) || 'Could not accept terms.')
         return
       }
 
@@ -142,7 +146,7 @@ function OrganizerLogin() {
       }
 
       if (!res.ok) {
-        setForgotError(data.detail || 'Could not send a new password.')
+        setForgotError(parseApiError(data.detail) || 'Could not send a new password.')
         return
       }
 

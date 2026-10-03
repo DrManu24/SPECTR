@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams, Link } from 'react-router-dom'
-import { apiFetch, apiUpload, storeCsrfFromResponse } from '../api'
+import { apiFetch, apiUpload, parseApiError, storeCsrfFromResponse } from '../api'
 import Header from '../components/Header'
 import { INVESTIGATOR_LABEL, INVESTIGATOR_LABEL_PLURAL } from '../labels'
 
@@ -111,7 +111,7 @@ function StudyInvestigators() {
       const data = await res.json()
 
       if (!res.ok) {
-        setCsvError(typeof data.detail === 'string' ? data.detail : 'Failed to process CSV.')
+        setCsvError(parseApiError(data.detail) || 'Failed to process CSV.')
         return
       }
 
@@ -139,7 +139,7 @@ function StudyInvestigators() {
       const data = await res.json()
 
       if (!res.ok) {
-        setError(data.detail || `Failed to add ${INVESTIGATOR_LABEL.toLowerCase()}.`)
+        setError(parseApiError(data.detail) || `Failed to add ${INVESTIGATOR_LABEL.toLowerCase()}.`)
         return
       }
 
@@ -165,7 +165,7 @@ function StudyInvestigators() {
       )
       if (!res.ok) {
         const data = await res.json()
-        alert(data.detail || 'Failed to revoke access.')
+        alert(parseApiError(data.detail) || 'Failed to revoke access.')
         return
       }
       setPendingAction(null)
@@ -186,7 +186,7 @@ function StudyInvestigators() {
       )
       if (!res.ok) {
         const data = await res.json()
-        alert(data.detail || 'Failed to restore access.')
+        alert(parseApiError(data.detail) || 'Failed to restore access.')
         return
       }
       setPendingAction(null)

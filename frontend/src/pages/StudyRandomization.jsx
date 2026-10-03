@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate, Link } from 'react-router-dom'
-import { apiFetch } from '../api'
+import { apiFetch, parseApiError } from '../api'
 import Header from '../components/Header'
 const VALID_METHODS = ['Permuted Block', 'Simple Random', 'Minimization']
 
@@ -142,7 +142,7 @@ function StudyRandomization() {
       })
       if (!res.ok) {
         const data = await res.json()
-        setSaveError(data.detail || 'Failed to save randomization settings.')
+        setSaveError(parseApiError(data.detail) || 'Failed to save randomization settings.')
         return
       }
       setSaveSuccess(true)
@@ -191,7 +191,7 @@ function StudyRandomization() {
       })
       const data = await res.json()
       if (!res.ok) {
-        setGenerateError(data.detail || 'Failed to generate randomization sequence.')
+        setGenerateError(parseApiError(data.detail) || 'Failed to generate randomization sequence.')
         return
       }
       navigate(`/organizer/studies/${studyId}/home`, {

@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { apiFetch, setCsrfToken } from '../api'
+import { apiFetch, parseApiError, setCsrfToken } from '../api'
 import PasswordInput from '../components/PasswordInput'
 import Header from '../components/Header'
 
@@ -24,7 +24,7 @@ function AdminLogin() {
       const data = await res.json()
 
       if (!res.ok) {
-        setError(data.detail || 'Login failed.')
+        setError(parseApiError(data.detail) || 'Login failed.')
         return
       }
 

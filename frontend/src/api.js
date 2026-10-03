@@ -31,7 +31,16 @@ export function parseApiError(detail) {
     return detail
   }
   if (Array.isArray(detail)) {
-    return detail.map((item) => item.msg || item).join(', ')
+    return detail
+      .map((item) => {
+        if (typeof item === 'string') return item
+        if (item?.msg) return item.msg
+        return JSON.stringify(item)
+      })
+      .join(', ')
+  }
+  if (typeof detail === 'object') {
+    return detail.message || JSON.stringify(detail)
   }
   return null
 }

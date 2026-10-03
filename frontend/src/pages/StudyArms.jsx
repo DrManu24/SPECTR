@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate, Link } from 'react-router-dom'
-import { apiFetch } from '../api'
+import { apiFetch, parseApiError } from '../api'
 import Header from '../components/Header'
 
 function StudyArms() {
@@ -90,7 +90,7 @@ function StudyArms() {
 
       if (!res.ok) {
         const data = await res.json()
-        setError(data.detail || 'Failed to save intervention arms.')
+        setError(parseApiError(data.detail) || 'Failed to save intervention arms.')
         return
       }
 

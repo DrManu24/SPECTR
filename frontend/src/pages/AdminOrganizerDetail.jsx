@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams, Link } from 'react-router-dom'
-import { apiFetch } from '../api'
+import { apiFetch, parseApiError } from '../api'
 import Header from '../components/Header'
 import {
   ORGANIZER_LABEL,
@@ -103,7 +103,7 @@ function AdminOrganizerDetail() {
       })
       const data = await res.json()
       if (!res.ok) {
-        setCountsError(data.detail || 'Failed to update counts.')
+        setCountsError(parseApiError(data.detail) || 'Failed to update counts.')
         return
       }
       setOrganizer(data)

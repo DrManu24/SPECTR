@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
-import { apiFetch, apiLogout, storeCsrfFromResponse } from '../api'
+import { apiFetch, apiLogout, parseApiError, storeCsrfFromResponse } from '../api'
 import Header from '../components/Header'
 import { ORGANIZER_LABEL, ORGANIZER_LABEL_PLURAL } from '../labels'
 
@@ -72,7 +72,7 @@ function AdminHome() {
       const data = await res.json()
 
       if (!res.ok) {
-        setFormError(data.detail || `Failed to invite ${ORGANIZER_LABEL}.`)
+        setFormError(parseApiError(data.detail) || `Failed to invite ${ORGANIZER_LABEL}.`)
         return
       }
 
