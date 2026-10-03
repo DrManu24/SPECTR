@@ -60,18 +60,18 @@ function StudyArms() {
     setError(null)
 
     if (arms.length === 0) {
-      setError('Please add at least one treatment arm before saving.')
+      setError('Please add at least one intervention arm before saving.')
       return
     }
 
     for (let i = 0; i < arms.length; i++) {
       const arm = arms[i]
       if (!arm.name.trim() || !arm.short_code.trim()) {
-        setError(`Treatment Arm #${i + 1} requires a valid Name and Short Code.`)
+        setError(`Intervention Arm #${i + 1} requires a valid Name and Short Code.`)
         return
       }
       if (parseInt(arm.allocation_ratio, 10) < 1) {
-        setError(`Treatment Arm #${i + 1} allocation ratio must be at least 1.`)
+        setError(`Intervention Arm #${i + 1} allocation ratio must be at least 1.`)
         return
       }
     }
@@ -90,12 +90,12 @@ function StudyArms() {
 
       if (!res.ok) {
         const data = await res.json()
-        setError(data.detail || 'Failed to save treatment arms.')
+        setError(data.detail || 'Failed to save intervention arms.')
         return
       }
 
       navigate(`/organizer/studies/${studyId}/home`, {
-        state: { successMsg: 'Treatment arms saved successfully.' },
+        state: { successMsg: 'Intervention arms saved successfully.' },
       })
     } catch {
       setError('Could not connect to backend.')
@@ -112,7 +112,7 @@ function StudyArms() {
           <Link to={`/organizer/studies/${studyId}/home`} className="back-link">
             ← Back to Study
           </Link>
-          <h1>{study ? study.title : 'Loading…'} — Treatment Arms</h1>
+          <h1>{study ? study.title : 'Loading…'} — Intervention Arms</h1>
         </div>
 
         {!study ? (
@@ -120,14 +120,14 @@ function StudyArms() {
         ) : (
           <div className="study-form-card">
             <div className="setup-card__header">
-              <span className="setup-badge">Treatment Arms</span>
-              <h2 style={{ marginTop: '8px' }}>Configure Treatment Arms</h2>
+              <span className="setup-badge">Intervention Arms</span>
+              <h2 style={{ marginTop: '8px' }}>Configure Intervention Arms</h2>
               <p>Define the arms of the trial and their allocation ratios.</p>
             </div>
 
             {study.status === 'Active' && (
               <div style={{ background: '#fef2f2', border: '1px solid #fecaca', borderRadius: '6px', padding: '12px 16px', margin: '16px 24px 0', color: '#991b1b', fontSize: '14px' }}>
-                <strong>Study is Active and locked.</strong> Treatment arms cannot be added, edited, or deleted.
+                <strong>Study is Active and locked.</strong> Intervention arms cannot be added, edited, or deleted.
               </div>
             )}
 
@@ -154,7 +154,7 @@ function StudyArms() {
                 <div className="arms-list">
                   {arms.length === 0 ? (
                     <div className="empty-state" style={{ margin: '8px 0 16px' }}>
-                      <p>No arms yet. Click <strong>+ Add Arm</strong> to define treatment arms for this study.</p>
+                      <p>No arms yet. Click <strong>+ Add Arm</strong> to define intervention arms for this study.</p>
                     </div>
                   ) : (
                     arms.map((arm, index) => (
@@ -166,7 +166,7 @@ function StudyArms() {
                               type="button"
                               className="btn-danger"
                               onClick={() => handleRemoveArm(index)}
-                              title="Remove this treatment arm"
+                              title="Remove this intervention arm"
                             >
                               Remove
                             </button>
@@ -244,7 +244,7 @@ function StudyArms() {
                     className="btn-primary"
                     disabled={submitting}
                   >
-                    {submitting ? 'Saving…' : 'Save Treatment Arms'}
+                    {submitting ? 'Saving…' : 'Save Intervention Arms'}
                   </button>
                 )}
                 <Link

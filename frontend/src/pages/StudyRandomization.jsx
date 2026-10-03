@@ -169,7 +169,7 @@ function StudyRandomization() {
       return
     }
     if (arms.length === 0) {
-      setSaveError('No treatment arms are configured. Return to the Arms page to define them before generating.')
+      setSaveError('No intervention arms are configured. Return to the Arms page to define them before generating.')
       return
     }
     setShowConfirm(true)
@@ -241,7 +241,7 @@ function StudyRandomization() {
             {/* Arms not configured — informational notice only */}
             {!isActive && hasNoArms && (
               <div style={{ background: '#fefce8', border: '1px solid #fef08a', borderRadius: '4px', padding: '10px 16px', margin: '16px 20px 0', fontSize: '13px', color: '#854d0e' }}>
-                <strong>No treatment arms configured.</strong> You may save these settings, but the sequence cannot be generated until at least one treatment arm is defined.{' '}
+                <strong>No intervention arms configured.</strong> You may save these settings, but the sequence cannot be generated until at least one intervention arm is defined.{' '}
                 <Link to={`/organizer/studies/${studyId}/arms`} style={{ color: '#2a6496', fontWeight: 600 }}>
                   Configure Arms
                 </Link>
@@ -318,7 +318,7 @@ function StudyRandomization() {
               {arms.length > 0 && (
                 <div style={{ marginTop: '8px' }}>
                   <div style={{ fontSize: '12px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.7px', color: '#666', marginBottom: '8px' }}>
-                    Configured Treatment Arms
+                    Configured Intervention Arms
                   </div>
                   <div className="table-scroll">
                   <table className="data-table" style={{ fontSize: '13px' }}>
@@ -347,7 +347,7 @@ function StudyRandomization() {
                   {!isActive && (
                     <div style={{ marginTop: '6px', textAlign: 'right' }}>
                       <Link to={`/organizer/studies/${studyId}/arms`} style={{ fontSize: '12px', color: '#2a6496', textDecoration: 'none', fontWeight: 600 }}>
-                        Edit Treatment Arms
+                        Edit Intervention Arms
                       </Link>
                     </div>
                   )}

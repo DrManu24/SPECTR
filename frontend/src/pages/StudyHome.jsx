@@ -247,7 +247,7 @@ function StudyHome() {
         'Kit Code',
         'Site',
         'Strata',
-        'Treatment Arm',
+        'Intervention Arm',
         'Blind Status',
         `${PARTICIPANT_LABEL} ID`,
         `${INVESTIGATOR_LABEL} ID`,
@@ -537,7 +537,7 @@ function StudyHome() {
                       <table className="data-table" style={{ margin: 0 }}>
                         <thead>
                           <tr>
-                            <th>Treatment Arm</th>
+                            <th>Intervention Arm</th>
                             <th>Total Records</th>
                             <th>Assigned</th>
                             <th>Unassigned</th>
@@ -716,7 +716,7 @@ function StudyHome() {
                             <th>Kit Code</th>
                             <th>Site</th>
                             <th>Strata</th>
-                            <th>Treatment Arm</th>
+                            <th>Intervention Arm</th>
                             <th>Blind Status</th>
                             <th>{PARTICIPANT_LABEL} ID</th>
                             <th>{INVESTIGATOR_LABEL} ID</th>

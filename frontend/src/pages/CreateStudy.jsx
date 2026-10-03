@@ -176,7 +176,7 @@ function CreateStudy() {
               <p>
                 {isEditMode
                   ? 'Update basic trial information. Protocol code must be unique across all studies.'
-                  : 'Configure basic trial information. You can add treatment arms and randomization settings after creation.'}
+                  : 'Configure basic trial information. You can add intervention arms and randomization settings after creation.'}
               </p>
             </div>
 

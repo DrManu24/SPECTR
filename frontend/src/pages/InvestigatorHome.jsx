@@ -287,7 +287,7 @@ function InvestigatorHome() {
       'Assigned At',
       'Unblinded At',
       'Unblind Reason',
-      'Treatment Arm',
+      'Intervention Arm',
     ]
 
     const rows = filteredAssignments.map((rec, index) => [
@@ -443,7 +443,7 @@ function InvestigatorHome() {
 
                 {assignedRecord && isParticipantBlinding && (
                   <div className="pb-blinding-warning">
-                    This study is <strong>Participant Blinded (PB)</strong>. Do not disclose the assigned treatment arm to the <strong>{PARTICIPANT_LABEL}</strong>.
+                    This study is <strong>Participant Blinded (PB)</strong>. Do not disclose the assigned intervention arm to the <strong>{PARTICIPANT_LABEL}</strong>.
                   </div>
                 )}
 
@@ -585,7 +585,7 @@ function InvestigatorHome() {
                         <th>{PARTICIPANT_LABEL} ID</th>
                         <th>Kit Code</th>
                         <th>Assigned By</th>
-                        <th>Treatment Arm</th>
+                        <th>Intervention Arm</th>
                         <th>Unblind Reason</th>
                       </tr>
                     </thead>
@@ -692,7 +692,7 @@ function InvestigatorHome() {
             </div>
 
             <p style={{ fontSize: '14px', color: '#444', lineHeight: '1.5', margin: '0 0 14px' }}>
-              You are requesting to unblind the treatment arm for {PARTICIPANT_LABEL} <strong>{unblindModalRecord.assigned_patient_id}</strong> (Kit <code>{unblindModalRecord.kit_code}</code>).
+              You are requesting to unblind the intervention arm for {PARTICIPANT_LABEL} <strong>{unblindModalRecord.assigned_patient_id}</strong> (Kit <code>{unblindModalRecord.kit_code}</code>).
             </p>
 
             <p

@@ -199,7 +199,7 @@ function UploadCSV() {
                     listed in allocation order, across all strata — acting as a single global sequence.
                   </li>
                   <li>
-                    <code>kit_code</code> — blinded kit identifier for the treatment arm (e.g.{' '}
+                    <code>kit_code</code> — blinded kit identifier for the intervention arm (e.g.{' '}
                     <code>TRL-4821</code>, <code>TRL-7390</code>). You may use different identifiers
                     across sites or strata as needed. If unblinded trial, may use acronyms for the
                     intervention.
@@ -218,7 +218,7 @@ function UploadCSV() {
                     &ldquo;N/A&rdquo; globally.
                   </li>
                   <li>
-                    <code>treatment_arm</code> — display name of the treatment arm (e.g. <em>Drug A</em>,{' '}
+                    <code>treatment_arm</code> — display name of the intervention arm (e.g. <em>Drug A</em>,{' '}
                     <em>Placebo</em>).
                   </li>
                   <li>Maximum file size: <strong>1 MB</strong>.</li>
@@ -357,7 +357,7 @@ function UploadCSV() {
                         <th>Kit Code</th>
                         <th>Site</th>
                         <th>Stratum</th>
-                        <th>Treatment</th>
+                        <th>Intervention</th>
                         <th>Status</th>
                       </tr>
                     </thead>
