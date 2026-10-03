@@ -23,44 +23,6 @@ Designed by trial methodologists, it supports:
 | **Central Trial Coordinator** | Create studies, configure arms and randomization, onboard site investigators |
 | **Site Investigator** | Randomize eligible participants at the point of care |
 
-## How to use
-
-### 1. Initial setup (Admin)
-
-1. Deploy SPECTR and open the home page (`/`).
-2. On first run, complete **First-Run Setup** with the server `SETUP_TOKEN` and create the admin account (password minimum 12 characters).
-3. Log in at `/admin`.
-4. Create central trial coordinator accounts.
-
-### 2. Configure a study (Central Trial Coordinator)
-
-1. Log in at `/organizer/login`.
-2. Create a new study with protocol metadata, blinding type, and inclusion/exclusion criteria.
-3. Define **treatment arms** and allocation ratios at `/organizer/studies/{id}/arms`.
-4. Set up randomization using one of:
-   - **CSV import** — Upload a pre-computed sequence at `/organizer/studies/{id}/upload-csv` (see `backend/sample_randomization.csv` for format).
-5. Add **sites** and **site investigators** per site. Credentials (Trial ID, username, temporary password) are emailed automatically when SMTP is configured; otherwise they appear in backend logs during development.
-6. Activate the study when configuration is complete.
-
-### 3. Randomize participants (Site Investigator)
-
-1. Log in at `/investigator/login` with **Trial ID** (study protocol code), **username**, and **password** from the credential email.
-2. Change the temporary password if prompted.
-3. On the site investigator home page:
-   - Confirm inclusion/exclusion criteria when configured.
-   - Enter or confirm the participant ID.
-   - Select the appropriate stratum (if stratified).
-   - Submit to receive the next sequential allocation from the concealed sequence.
-4. Export allocation history from the dashboard when needed.
-
-### 4. Monitor and export (Central Trial Coordinator)
-
-From the study home page (`/organizer/studies/{id}/home`), central trial coordinators can:
-
-- Review all randomization records and assignment status.
-- Filter by site, stratum, or assignment state.
-- Export allocation logs for monitoring and audit.
-
 ## Host it yourself
 
 ### Prerequisites
