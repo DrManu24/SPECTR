@@ -6,6 +6,7 @@ import InclusionExclusionModal from '../components/InclusionExclusionModal'
 import { INVESTIGATOR_LABEL, ORGANIZER_LABEL, PARTICIPANT_LABEL } from '../labels'
 import { BLINDING_TYPE, investigatorIsBlinded } from '../utils/blindingType'
 import { downloadCsv, rowsToCsv } from '../utils/csv'
+import { normalizeIdentifier } from '../utils/normalizeIdentifier'
 
 function formatExportDateTime(value) {
   if (!value) return ''
@@ -159,8 +160,8 @@ function InvestigatorHome() {
     setError(null)
     setAssignedRecord(null)
 
-    const trimmed = patientId.trim()
-    if (!trimmed) {
+    const normalizedPatientId = normalizeIdentifier(patientId)
+    if (!normalizedPatientId) {
       setError(`Please enter a valid ${PARTICIPANT_LABEL} ID.`)
       return
     }
@@ -189,7 +190,7 @@ function InvestigatorHome() {
           'Idempotency-Key': idempotencyKeyRef.current,
         },
         json: {
-          patient_id: trimmed,
+          patient_id: normalizedPatientId,
           strata_id: parseInt(selectedStrataId, 10),
         },
       })
@@ -323,7 +324,7 @@ function InvestigatorHome() {
     : assignedList
 
   const canAssign = Boolean(
-    patientId.trim()
+    normalizeIdentifier(patientId)
     && selectedStrata
     && selectedStrata.unassigned_count > 0
     && (!requiresIeAttestation || ieAttested)
@@ -453,7 +454,7 @@ function InvestigatorHome() {
                       id="participant-id"
                       type="text"
                       value={patientId}
-                      onChange={(e) => setPatientId(e.target.value)}
+                      onChange={(e) => setPatientId(normalizeIdentifier(e.target.value))}
                       placeholder="e.g. PAT-1001"
                       required
                     />

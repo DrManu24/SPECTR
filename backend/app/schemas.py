@@ -4,7 +4,7 @@ from typing import Literal, Optional
 from pydantic import BaseModel, field_validator
 
 from .core.blinding_type import BlindingType, validate_blinding_type
-from .core.validators import normalize_email
+from .core.validators import normalize_email, normalize_study_identifier
 from .core.investigators import normalize_investigator_username
 
 PASSWORD_MIN_LENGTH = 12
@@ -268,10 +268,18 @@ class StudyCreate(BaseModel):
     def valid_blinding_type(cls, v: int) -> int:
         return validate_blinding_type(v)
 
-    @field_validator("title", "protocol_code")
+    @field_validator("title")
     @classmethod
-    def not_empty(cls, v: str) -> str:
+    def title_not_empty(cls, v: str) -> str:
         v = v.strip()
+        if not v:
+            raise ValueError("Field cannot be empty")
+        return v
+
+    @field_validator("protocol_code")
+    @classmethod
+    def protocol_code_normalized(cls, v: str) -> str:
+        v = normalize_study_identifier(v)
         if not v:
             raise ValueError("Field cannot be empty")
         return v
@@ -299,10 +307,10 @@ class StudyUpdate(BaseModel):
 
     @field_validator("protocol_code")
     @classmethod
-    def protocol_code_not_empty(cls, v: Optional[str]) -> Optional[str]:
+    def protocol_code_normalized(cls, v: Optional[str]) -> Optional[str]:
         if v is None:
             return v
-        v = v.strip()
+        v = normalize_study_identifier(v)
         if not v:
             raise ValueError("Protocol code cannot be empty")
         return v
@@ -467,6 +475,14 @@ class CsvUploadResponse(BaseModel):
 class AssignKitRequest(BaseModel):
     patient_id: str
     strata_id: int
+
+    @field_validator("patient_id")
+    @classmethod
+    def patient_id_normalized(cls, v: str) -> str:
+        v = normalize_study_identifier(v)
+        if not v:
+            raise ValueError("Patient ID cannot be empty")
+        return v
 
 
 class AssignKitResponse(RandomizationRecordOut):

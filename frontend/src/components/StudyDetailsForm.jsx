@@ -8,6 +8,7 @@ import {
   buildStudyDetailsPayload,
   criteriaFromStudy,
 } from '../utils/studyForm'
+import { normalizeIdentifier } from '../utils/normalizeIdentifier'
 
 function StudyDetailsForm({
   defaultValues,
@@ -23,7 +24,9 @@ function StudyDetailsForm({
   const initialCriteria = criteriaFromStudy(initial.inclusionExclusionCriteria)
 
   const [title, setTitle] = useState(initial.title ?? '')
-  const [protocolCode, setProtocolCode] = useState(initial.protocolCode ?? '')
+  const [protocolCode, setProtocolCode] = useState(
+    initial.protocolCode ? normalizeIdentifier(initial.protocolCode) : ''
+  )
   const [description, setDescription] = useState(initial.description ?? '')
   const [blindingType, setBlindingType] = useState(
     initial.blindingType ?? DEFAULT_BLINDING_TYPE
@@ -88,7 +91,7 @@ function StudyDetailsForm({
             id="protocol-code"
             type="text"
             value={protocolCode}
-            onChange={(e) => setProtocolCode(e.target.value)}
+            onChange={(e) => setProtocolCode(normalizeIdentifier(e.target.value))}
             placeholder="e.g. CT-2026-004"
             required
           />

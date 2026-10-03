@@ -1,3 +1,5 @@
+import { normalizeIdentifier } from './normalizeIdentifier'
+
 export function criteriaFromStudy(criteria) {
   const inclusions =
     criteria?.inclusions?.length > 0 ? [...criteria.inclusions] : ['']
@@ -32,7 +34,7 @@ export function buildStudyDetailsPayload({
 }) {
   return {
     title: title.trim(),
-    protocol_code: protocolCode.trim(),
+    protocol_code: normalizeIdentifier(protocolCode),
     description: description.trim() || null,
     blinding_type: blindingType,
     emergency_unblinding_allowed: emergencyUnblinding,
