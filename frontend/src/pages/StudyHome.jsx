@@ -512,7 +512,7 @@ function StudyHome() {
                                   className="btn-secondary"
                                   style={{ textDecoration: 'none', fontSize: '12px', padding: '4px 10px', whiteSpace: 'nowrap' }}
                                 >
-                                  Add Site {INVESTIGATOR_LABEL}
+                                  Add/Manage Site {INVESTIGATOR_LABEL}
                                 </Link>
                               </td>
                             </tr>
