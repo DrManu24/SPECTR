@@ -24,25 +24,24 @@ This protocol governs the internal technical verification, baseline functional s
 
 | Test Case ID | Gate / Category | Objective | Tester | Date | Status |
 |---|---|---|---|---|---|
-| **TC-SMK-01** | Gate 1: Sanity | User authentication, dashboard initialization and site display |Manu 
-Pradeep & Dhanush Kumar | 29-09-2026 | Pass |
+| **TC-SMK-01** | Gate 1: Sanity | User authentication, dashboard initialization and site display | Dhanush Kumar | 29-09-2026 | Pass |
 | **TC-SMK-02** | Gate 1: Sanity | Standard single-file sequence ingestion and table mapping | Manu Pradeep | 28-09-2026 | Pass |
 | **TC-SMK-03** | Gate 1: Sanity | End-to-end baseline allocation | Manu Pradeep | 28-09-2026 | Pass |
 | **TC-SMK-04** | Gate 1: Sanity | On-demand allocation log and audit CSV export | Manu Pradeep | 28-09-2026 | Pass |
-| **TC-CON-01** | Gate 2: Concurrency | Row-locking under simultaneous bedside allocations | Dhanush Kumar | 29-09-2026 | Pass |
+| **TC-CON-01** | Gate 2: Concurrency | Row-locking under simultaneous bedside allocations | Dhanush Kumar & Manu Pradeep | 29-09-2026 | Pass |
 | **TC-IDM-01** | Gate 2: Resilience | Idempotency and double-click / network drop handling | Dhanush Kumar | 29-09-2026 | Pass |
 | **TC-CNC-01** | Gate 2: Concealment | Zero sequence pre-fetching or client-side DOM/state leakage | Dhanush Kumar | 29-09-2026 | Pass |
-| **TC-UNB-01** | Gate 2: Regulatory | Audited emergency single-participant code-break (ICH-GCP 5.5.3 g) | — | — | Pending |
+| **TC-UNB-01** | Gate 2: Regulatory | Audited emergency single-participant code-break (ICH-GCP 5.5.3 g) | Manu Pradeep | 30-09-2026 | Pass |
 | **TC-SEC-01** | Gate 2: Multicenter | Site-specific queue isolation and cross-center access denial | Dhanush Kumar | 29-09-2026 | Pass |
-| **TC-VAL-01** | Gate 2: Data Integrity | Duplicate Participant ID entry prevention | — | — | Pending |
+| **TC-VAL-01** | Gate 2: Data Integrity | Duplicate Participant ID entry prevention | Manu Pradeep | 30-09-2026 | Pass |
 | **TC-CLK-01** | Gate 2: Data Integrity | Server-side UTC enforcement against client clock tampering | Dhanush Kumar | 29-09-2026 | Pass |
 | **TC-AUD-01** | Gate 2: Regulatory | Audit trail immutability and append-only database permissions | Dhanush Kumar | 29-09-2026 | Pass |
 | **TC-BND-01** | Gate 3: Boundary | Graceful handling of stratum capacity exhaustion | Manu Pradeep | 28-09-2026 | Pass |
-| **TC-ING-01** | Gate 3: Ingestion | Schema and syntax validation of malformed sequence files | — | — | Pending |
+| **TC-ING-01** | Gate 3: Ingestion | Schema and syntax validation of malformed sequence files | Manu Pradeep | 30-09-2026 | Pass |
 | **TC-REC-01** | Gate 3: Resilience | Database snapshot restoration and data integrity (ICH-GCP 5.5.3 f) | Dhanush Kumar | 03-10-2026 | Pass |
-| **TC-SES-01** | Gate 3: Session Security | Mid-form authentication expiration and safe failure | — | — | Pending |
-| **TC-ACC-01** | Gate 3: Access Control | Immediate lockout upon account suspension/revocation | — | — | Pending |
-| **TC-NOT-01** | Gate 3: Notifications | Automated email alerts and header verification | — | — | Pending |
+| **TC-SES-01** | Gate 3: Session Security | Mid-form authentication expiration and safe failure | Manu Pradeep | 30-09-2026 | Pass |
+| **TC-ACC-01** | Gate 3: Access Control | Immediate lockout upon account suspension/revocation | Manu Pradeep | 30-09-2026 | Pass |
+| **TC-NOT-01** | Gate 3: Notifications | Automated email alerts and header verification | Manu Pradeep | 30-09-2026 | Pass |
 
 ---
 
@@ -127,7 +126,7 @@ Pradeep & Dhanush Kumar | 29-09-2026 | Pass |
   * `TEST-002` waits for transaction lock release and claims sequence row 2.
   * Zero duplicate row assignments; zero unhandled database deadlocks.
 * **Observed Result:** Executed parallel `POST /investigator/assign-kit` requests via `validation/scripts/tc-con-01-concurrency.sh` against https://spectr.mmmr.in using investigator account `AEWSSY` and stratum `Stratum A` (id=24). Dispatched simultaneous allocations for `TEST-001` and `TEST-002` with distinct `Idempotency-Key` headers. Both requests returned HTTP 200 with `assignment_outcome: created`. `TEST-002` claimed sequence row 1 (record id 21185, kit `TRL-4821`); `TEST-001` claimed sequence row 2 (record id 21186, kit `TRL-7390`). Zero duplicate sequence assignments; zero database deadlocks observed.
-* **Sign-off:** Mr. Dhanush Kumar (Lead Developer) | Date: 29-09-2026; Dr. Manu Pradeep (Clinical Epidemiologist) | Date: —
+* **Sign-off:** Mr. Dhanush Kumar (Lead Developer) | Date: 29-09-2026; Dr. Manu Pradeep (Clinical Epidemiologist) | Date: 29-09-2026
 
 ---
 
@@ -173,8 +172,8 @@ Pradeep & Dhanush Kumar | 29-09-2026 | Pass |
   * All other past and future sequence rows in the stratum remain fully masked.
   * An immutable entry is appended to the audit log recording operator user ID, client IP, UTC timestamp, unblinded participant ID, and the exact clinical rationale entered.
   * Automated security email notification is dispatched immediately to the Central Coordinating Office.
-* **Observed Result:**
-* **Sign-off:** Clinical Epidemiologist | Date: —
+* **Observed Result:** Navigated to Emergency Code-Break module as CTC for participant 'AMP-001'. Entered required clinical rationale ('SUSAR - Grade 4 anaphylactoid reaction requiring unblinding'). Treatment assignment unmasked strictly for 'AMP-001'. Confirmed all other sequence rows and participant allocations remain fully masked. Audit log entry recorded operator ID, client IP, UTC timestamp, and rationale. Automated security notification email received by trial coordinator.
+* **Sign-off:** Dr. Manu Pradeep (Clinical Epidemiologist) | Date: 30-09-2026
 
 ---
 
@@ -197,8 +196,8 @@ Pradeep & Dhanush Kumar | 29-09-2026 | Pass |
   1. Complete allocation for Participant ID `AMP-101` in stratum `Amrita Hospital / No Epidural`.
   2. Attempt a second allocation using the identical ID `AMP-101` in any stratum.
 * **Pass Criteria:** System blocks submission with error `Participant ID already randomized`; sequence queue remains unconsumed.
-* **Observed Result:**
-* **Sign-off:** Clinical Epidemiologist | Date: —
+* **Observed Result:** Attempted allocation using duplicate screening ID 'AMP-101' in an active study stratum. System intercepted the submission and blocked new allocation creation. UI rendered clinical warning modal: 'Participant AMP-101 was already assigned kit code Group A on 30/9/2026, 2:25:59 pm.' Confirmed via database query that active stratum sequence pointer was unchanged, zero new sequence rows were consumed, and no duplicate records were inserted.
+* **Sign-off:** Dr. Manu Pradeep (Clinical Epidemiologist) | Date: 30-09-2026
 
 ---
 
@@ -261,8 +260,8 @@ Pradeep & Dhanush Kumar | 29-09-2026 | Pass |
   1. Upload CSV missing the required `treatment_arm` column.
   2. Upload CSV containing non-integer sequence IDs or mismatched column counts.
 * **Pass Criteria:** Ingestion rejected; user shown exact row/column syntax failure; complete transaction rollback.
-* **Observed Result:**
-* **Sign-off:** Clinical Epidemiologist | Date: —
+* **Observed Result:** Tested upload with missing 'treatment_arm' column header; parser rejected file at row 0 with error 'Missing required column: treatment_arm'. Tested second file with non-integer sequence IDs; ingestion rejected and full transaction rolled back. Zero partial rows committed to database.
+* **Sign-off:** Dr. Manu Pradeep (Clinical Epidemiologist) | Date: 30-09-2026
 
 ---
 
@@ -295,8 +294,8 @@ Pradeep & Dhanush Kumar | 29-09-2026 | Pass |
   * System returns `401 Unauthorized`.
   * No sequence row is allocated, revealed, or consumed in the database.
   * User is redirected to login without state corruption.
-* **Observed Result:**
-* **Sign-off:** Clinical Epidemiologist | Date: —
+* **Observed Result:** Populated complete patient screening details on the bedside intake form. Cleared the active authenticated session cookie via browser developer tools prior to form submission to simulate mid-form session timeout. Clicked 'Randomize'; system safely intercepted the unauthenticated request, returned HTTP 401 Unauthorized, and displayed the explicit user modal: 'Your session expired. Please sign in again.' Confirmed via backend log that the sequence pointer remained unchanged, zero rows were consumed, and no orphan allocation records were created.
+* **Sign-off:** Dr. Manu Pradeep (Clinical Epidemiologist) | Date: 30-09-2026
 
 ---
 
@@ -304,14 +303,16 @@ Pradeep & Dhanush Kumar | 29-09-2026 | Pass |
 
 * **Objective:** Ensure deactivated user accounts cannot execute allocations even if they hold an unexpired cached session.
 * **Method:**
-  1. Log in as `investigator_site_b`.
-  2. From the Admin panel, mark `investigator_site_b` as `INACTIVE / REVOKED`.
-  3. From the investigator session, immediately attempt an allocation request.
+  1. Authenticate as an investigator (inv_Hospital_01) and leave the bedside intake view active.
+  2. From the CTC administration panel in a separate window, set the investigator’s status to INACTIVE (Revoke access).
+  3. Return to the investigator browser window and attempt to submit an allocation or interact with the form.
+  4. Attempt to re-authenticate at /investigator/login using the revoked credentials.
 * **Pass Criteria:**
-  * Allocation request is rejected with `403 Forbidden` or `401 Unauthorized`.
-  * Sequence pointer does not increment.
-* **Observed Result:**
-* **Sign-off:** Clinical Epidemiologist | Date: —
+  * Active investigator session is terminated immediately; user is forced out to the authentication view.
+  * Allocation request is blocked; sequence pointer does not increment, and zero data is committed.
+  * Subsequent login attempts are rejected with explicit user warning: "Investigator access has been revoked."
+* **Observed Result:** Authenticated under investigator account 'inv_Hospital_01' with bedside intake form loaded. Account transitioned to 'INACTIVE' via CTC administration portal. Upon attempting allocation submission from the active session, the platform immediately invalidated the session and forced sign-out without advancing the sequence pointer. Attempted to log back in using the same credentials; authentication was rejected with the explicit security warning: 'Investigator access has been revoked.' Confirmed zero sequence rows consumed and zero database records created.
+* **Sign-off:** Dr. Manu Pradeep (Clinical Epidemiologist) | Date: 30-09-2026
 
 ---
 
@@ -323,8 +324,8 @@ Pradeep & Dhanush Kumar | 29-09-2026 | Pass |
   * Site email received with allocation confirmation.
   * Coordinating center email received with audit record.
   * Delivery completed within 30 seconds; SPF/DKIM headers pass verification.
-* **Observed Result:**
-* **Sign-off:** Clinical Epidemiologist | Date: —
+* **Observed Result:** Executed allocation for screening ID 'AMP-102'. Central Coordinating Office audit alert email received at 11 seconds. Message headers verified with valid SPF and DKIM pass statuses; email body accurately lists screening ID, stratum, and server UTC timestamp.
+* **Sign-off:** Dr. Manu Pradeep (Clinical Epidemiologist) | Date: 30-09-2026
 
 ---
 
@@ -332,15 +333,15 @@ Pradeep & Dhanush Kumar | 29-09-2026 | Pass |
 
 | Defect ID | Associated Test Case | Description / Error Trace | Severity | Status | Commit Fix Hash |
 |---|---|---|---|---|---|
-| — | — | — | — | — | — |
+| DEF-01 | TC-VAL-01 | Entering duplicate Screening ID re-rendered historical assignment modal without an explicit duplicate warning banner. Patched to hard-block allocation and display explicit duplicate alert with historical timestamp. | Medium | Closed | e544dd |
 
 ---
 
-## 5. Alpha Validation Completion Sign-Off
+## 5. Internal Validation Completion Sign-Off
 
 The sign-offs below certify that all alpha test cases across Gates 1, 2, and 3 have been executed and verified against predefined pass criteria in the testbed environment.
 
 | Role | Name & Title | Final Verification Commit | Date (UTC) | Status |
 |---|---|---|---|---|
 | **Lead Developer** | — | Pending final validation cycle | — | Open |
-| **Clinical Epidemiologist** | — | Pending final validation cycle | — | Open |
+| **Clinical Epidemiologist** | Dr. Manu Pradeep, Clinical Lead | 9b7c56 | 03-10-2026 | Closed |
