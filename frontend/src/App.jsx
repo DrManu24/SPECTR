@@ -3,6 +3,8 @@ import './App.css'
 
 import Home from './pages/Home'
 import TermsOfService from './pages/TermsOfService'
+import TrialOnboarding from './pages/TrialOnboarding'
+import UserGuide from './pages/UserGuide'
 import AdminGuard from './pages/AdminGuard'
 import AdminLogin from './pages/AdminLogin'
 import AdminHome from './pages/AdminHome'
@@ -31,6 +33,8 @@ function App() {
     <Routes>
       <Route path="/" element={<Home />} />
       <Route path="/terms" element={<TermsOfService />} />
+      <Route path="/onboarding" element={<TrialOnboarding />} />
+      <Route path="/user-guide" element={<UserGuide />} />
 
       <Route path="/admin" element={<AdminGuard />} />
       <Route path="/admin/login" element={<AdminLogin />} />

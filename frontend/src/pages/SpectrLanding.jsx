@@ -1,9 +1,8 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { Link } from 'react-router-dom'
 
 const GITHUB_URL = 'https://github.com/dhanush-kuma/SPECTR'
 const DOCS_URL = 'https://github.com/dhanush-kuma/SPECTR/blob/main/docs/ENGINEERING.md'
 const SITE_URL = 'https://spectr.mmmr.in'
-const ONBOARDING_EMAIL = 'mmmedicalresearch@outlook.com'
 
 const SUPPORTS = [
   {
@@ -50,70 +49,6 @@ const SUPPORTS = [
 ]
 
 function SpectrLanding() {
-  const onboardingRef = useRef(null)
-  const highlightTimersRef = useRef([])
-  const [onboardingHighlighted, setOnboardingHighlighted] = useState(false)
-
-  useEffect(() => {
-    return () => {
-      highlightTimersRef.current.forEach((timerId) => window.clearTimeout(timerId))
-    }
-  }, [])
-
-  const scrollToOnboarding = useCallback((event) => {
-    event.preventDefault()
-    const el = onboardingRef.current
-    if (!el) return
-
-    highlightTimersRef.current.forEach((timerId) => window.clearTimeout(timerId))
-    highlightTimersRef.current = []
-    setOnboardingHighlighted(false)
-
-    const scheduleTimer = (callback, delay) => {
-      const timerId = window.setTimeout(callback, delay)
-      highlightTimersRef.current.push(timerId)
-      return timerId
-    }
-
-    const playHighlight = () => {
-      scheduleTimer(() => {
-        setOnboardingHighlighted(true)
-        scheduleTimer(() => setOnboardingHighlighted(false), 2400)
-      }, 400)
-    }
-
-    let highlightScheduled = false
-    const scheduleHighlightOnce = () => {
-      if (highlightScheduled) return
-      highlightScheduled = true
-      playHighlight()
-    }
-
-    const rect = el.getBoundingClientRect()
-    const alreadyInView = rect.top >= 0 && rect.top <= window.innerHeight * 0.45
-
-    if (alreadyInView) {
-      scheduleHighlightOnce()
-      return
-    }
-
-    el.scrollIntoView({ behavior: 'smooth', block: 'start' })
-
-    if ('onscrollend' in window) {
-      const onScrollEnd = () => {
-        window.removeEventListener('scrollend', onScrollEnd)
-        scheduleHighlightOnce()
-      }
-      window.addEventListener('scrollend', onScrollEnd, { once: true })
-      scheduleTimer(() => {
-        window.removeEventListener('scrollend', onScrollEnd)
-        scheduleHighlightOnce()
-      }, 1400)
-    } else {
-      scheduleTimer(scheduleHighlightOnce, 1100)
-    }
-  }, [])
-
   return (
     <article className="landing">
       <header className="landing__hero">
@@ -125,9 +60,12 @@ function SpectrLanding() {
           investigator-initiated, and not-for-profit multicenter randomized controlled trials.
         </p>
         <div className="landing__cta">
-          <a className="btn-primary" href="#onboarding" onClick={scrollToOnboarding}>
+          <Link className="btn-primary" to="/onboarding">
             Get Started / Request Onboarding
-          </a>
+          </Link>
+          <Link className="btn-secondary" to="/user-guide">
+            User Guide
+          </Link>
           <a
             className="btn-secondary"
             href={GITHUB_URL}
@@ -277,35 +215,6 @@ function SpectrLanding() {
           <strong>Source Code:</strong> Available under the AGPLv3 License on{' '}
           <a href={GITHUB_URL} target="_blank" rel="noopener noreferrer">GitHub</a>.
         </p>
-        <div
-          id="onboarding"
-          ref={onboardingRef}
-          className={`landing__onboarding${
-            onboardingHighlighted ? ' landing__onboarding--highlight' : ''
-          }`}
-        >
-          <p>
-            <strong>Trial Onboarding &amp; Inquiries:</strong> Email{' '}
-            <a href={`mailto:${ONBOARDING_EMAIL}`}>{ONBOARDING_EMAIL}</a> with:
-          </p>
-          <ul className="landing__list">
-            <li>
-              <strong>Investigator Info:</strong> Name, designation, institution, phone number
-            </li>
-            <li>
-              <strong>Trial Abstract:</strong> Study design, sample size, and objectives (max 500 words)
-            </li>
-            <li>
-              <strong>Sponsorship &amp; Funding:</strong> Academic/investigator-initiated,
-              not-for-profit, or commercial (include grant status).
-            </li>
-            <li>
-              <strong>Support Requirement:</strong> Indicate whether you require Self-Service Access or
-              a paid Managed Onboarding &amp; Sequence Generation service package from experts at MM
-              Medical Research.
-            </li>
-          </ul>
-        </div>
       </footer>
     </article>
   )
