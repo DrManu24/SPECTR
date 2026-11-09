@@ -47,12 +47,12 @@ export function parseApiError(detail) {
 
 export function setCsrfToken(token) {
   if (token) {
-    sessionStorage.setItem(CSRF_STORAGE_KEY, token)
+    localStorage.setItem(CSRF_STORAGE_KEY, token)
   }
 }
 
 export function clearCsrfToken() {
-  sessionStorage.removeItem(CSRF_STORAGE_KEY)
+  localStorage.removeItem(CSRF_STORAGE_KEY)
 }
 
 export function storeCsrfFromResponse(data) {
@@ -86,12 +86,12 @@ function getCsrfToken() {
   // Prefer the cookie — it is shared across tabs (same-origin deploy).
   const fromCookie = readCsrfCookie()
   if (fromCookie) {
-    sessionStorage.setItem(CSRF_STORAGE_KEY, fromCookie)
+    localStorage.setItem(CSRF_STORAGE_KEY, fromCookie)
     return fromCookie
   }
 
-  // Fallback when the cookie is not readable (e.g. cross-origin local dev).
-  return sessionStorage.getItem(CSRF_STORAGE_KEY) || ''
+  // Fallback when the cookie is not readable (e.g. cross-origin local dev). 
+  return localStorage.getItem(CSRF_STORAGE_KEY) || ''
 }
 
 function mePathForApiPath(path) {
