@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { apiFetch, bootstrapCsrf, parseApiError, setCsrfToken } from '../api'
+import { apiFetch, bootstrapCsrf, parseApiError, setCsrfToken, storeCsrfFromResponse } from '../api'
 import PasswordInput from '../components/PasswordInput'
 import Header from '../components/Header'
 import TermsOfServiceModal from '../components/TermsOfServiceModal'
@@ -15,6 +15,7 @@ function OrganizerLogin() {
   const [submitting, setSubmitting] = useState(false)
   const [showTerms, setShowTerms] = useState(false)
   const [termsAccepted, setTermsAccepted] = useState(false)
+  const [checkingSession, setCheckingSession] = useState(true)
 
   const [showForgotPassword, setShowForgotPassword] = useState(false)
   const [forgotEmail, setForgotEmail] = useState('')
@@ -24,7 +25,19 @@ function OrganizerLogin() {
 
   useEffect(() => {
     bootstrapCsrf()
-  }, [])
+    // If already authenticated, redirect to home
+    apiFetch('/organizer/me')
+      .then(async (res) => {
+        if (res.ok) {
+          const data = await res.json()
+          storeCsrfFromResponse(data)
+          navigate('/organizer/home', { replace: true })
+        } else {
+          setCheckingSession(false)
+        }
+      })
+      .catch(() => setCheckingSession(false))
+  }, [navigate])
 
   function openForgotPassword() {
     setForgotError(null)
@@ -161,6 +174,17 @@ function OrganizerLogin() {
     } finally {
       setForgotSubmitting(false)
     }
+  }
+
+  if (checkingSession) {
+    return (
+      <>
+        <Header />
+        <main className="app">
+          <p className="loading">Verifying session…</p>
+        </main>
+      </>
+    )
   }
 
   return (

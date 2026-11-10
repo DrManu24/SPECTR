@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
-import { apiFetch, bootstrapCsrf, parseApiError, setCsrfToken } from '../api'
+import { apiFetch, bootstrapCsrf, parseApiError, setCsrfToken, storeCsrfFromResponse } from '../api'
 import PasswordInput from '../components/PasswordInput'
 import Header from '../components/Header'
 import { INVESTIGATOR_LABEL, ORGANIZER_LABEL } from '../labels'
@@ -14,6 +14,7 @@ function InvestigatorLogin() {
   const [rememberMe, setRememberMe] = useState(false)
   const [error, setError] = useState(null)
   const [submitting, setSubmitting] = useState(false)
+  const [checkingSession, setCheckingSession] = useState(true)
 
   const [showForgotPassword, setShowForgotPassword] = useState(false)
   const [forgotUsername, setForgotUsername] = useState('')
@@ -23,7 +24,23 @@ function InvestigatorLogin() {
 
   useEffect(() => {
     bootstrapCsrf()
-  }, [])
+    // If already authenticated, redirect to home (skip check if session explicitly expired)
+    if (sessionExpired) {
+      setCheckingSession(false)
+      return
+    }
+    apiFetch('/investigator/me')
+      .then(async (res) => {
+        if (res.ok) {
+          const data = await res.json()
+          storeCsrfFromResponse(data)
+          navigate('/investigator/home', { replace: true })
+        } else {
+          setCheckingSession(false)
+        }
+      })
+      .catch(() => setCheckingSession(false))
+  }, [navigate, sessionExpired])
 
   function openForgotPassword() {
     setForgotError(null)
@@ -115,6 +132,17 @@ function InvestigatorLogin() {
     } finally {
       setForgotSubmitting(false)
     }
+  }
+
+  if (checkingSession) {
+    return (
+      <>
+        <Header />
+        <main className="app">
+          <p className="loading">Verifying session…</p>
+        </main>
+      </>
+    )
   }
 
   return (
